@@ -1,116 +1,77 @@
 # PeakRack Email Verification Gate
 
-PeakRack Email Verification Gate 是一个适用于 WHMCS 9 的邮箱验证拦截 Addon Module。模块保持 WHMCS 原生 Email Verification 开启，登录后拦截未验证邮箱用户，并提供可控的自定义重发流程：自定义验证链接 + 6 位安全验证码。
+PeakRack Email Verification Gate 是一款 WHMCS 邮箱验证增强模块。它保留 WHMCS 原生邮箱验证机制，同时为未完成验证的客户提供更清晰的拦截页、自定义重发邮件、6 位验证码输入和后台审计能力。
 
-目标环境：
+模块适用于需要先完成邮箱验证再开放完整客户中心功能的 WHMCS 站点，尤其适合希望降低未验证账号下单、提交工单或访问账单页面风险的业务场景。
+
+## 主要功能
+
+- 登录后自动识别未验证邮箱客户，并引导到独立验证页。
+- 新注册客户的第一封验证邮件仍由 WHMCS 原生流程发送，减少注册流程干扰。
+- 客户可在验证页获取新的验证邮件，邮件内同时包含验证按钮和 6 位安全验证码。
+- 验证码输入采用 6 格布局，支持自动跳格、粘贴和自动核对。
+- 重发按钮带 60 秒倒计时，冷却结束后自动恢复可点击。
+- 验证成功后自动返回客户原先尝试访问的页面。
+- 支持中文和英文客户提示、邮件标题、邮件正文和后台界面。
+- 支持验证码有效期、验证链接有效期、每小时重发次数、错误锁定时间等配置。
+- 后台提供验证记录、事件日志、用户解锁、过期数据清理和 HMAC 密钥轮换工具。
+- 关键事件可同步写入 WHMCS Activity Log，便于管理员追踪。
+
+## 安全设计
+
+- 自定义验证链接 token 和 6 位验证码只保存 HMAC 哈希，不保存明文。
+- 验证码错误次数达到上限后会临时锁定。
+- 重发频率由前端倒计时和服务端限制同时控制。
+- 验证成功后的返回地址会经过过滤，避免外部跳转。
+- HMAC 密钥可在后台手动轮换，轮换后未使用的自定义链接和验证码会失效。
+
+## 兼容环境
 
 - WHMCS 9.0.3
 - PHP 8.2 / 8.3
 - MySQL 8.0
-- WHMCS 原生 Six、Twenty-One、Nexus 主题
-- 兼容 Lagom Client Theme
-
-## 功能说明
-
-- 不修改 WHMCS 核心文件。
-- 不修改 Lagom 核心文件。
-- 使用 Addon Module + `hooks.php`。
-- 使用 `ClientAreaPage` 将未验证用户跳转到 `index.php?m=peakrack_email_gate`。
-- 使用 `ShoppingCartValidateCheckout` 兜底阻止未验证用户下单。
-- `UserAdd` 只初始化记录，第一次注册不发送自定义验证码。
-- `UserEmailVerificationComplete` 在原生邮箱验证完成后清理模块 token。
-- 客户验证页支持中英双语。
-- 6 个独立验证码输入框，支持自动跳格、粘贴、AJAX 自动核对，不再需要提交按钮。
-- 验证成功后自动返回客户原先尝试访问的页面。
-- 自定义邮件包含按钮式验证链接和蓝色安全验证码块。
-- 自定义 token 和 6 位验证码只保存 HMAC 哈希，不明文入库。
-- 默认验证码 10 分钟有效，自定义链接 30 分钟有效。
-- 默认重发冷却 60 秒，每小时最多 5 次。
-- 重发冷却期间按钮显示纯数字倒计时，例如 `60`、`59`、`58`，倒计时结束后自动恢复可点击。
-- 默认验证码错误最多 5 次，超过锁定 15 分钟。
-- 邮件优先使用 WHMCS Local API `SendEmail`，支持 `customsubject`、`custommessage`、`customvars`。
-- 同步 WHMCS 9 用户邮箱验证状态，优先尝试 User Model，再检测 `tblusers` 字段 fallback，并同步旧版 `tblclients.email_verified`。
-- 关键事件写入 WHMCS Activity Log 和模块日志表。
-- 后台提供设置、记录、日志、解锁用户、清理过期 token、日志保留清理、HMAC 密钥轮换功能。
-- 使用标准 WHMCS Smarty 客户区模板。
-
-## 业务逻辑
-
-新用户第一次注册后，仍只发送 WHMCS 原生邮箱验证邮件。模块在 `UserAdd` 中只初始化记录，不发送自定义邮件。
-
-用户登录后，如果邮箱未验证，会被跳转到验证页。从用户点击“获取验证码”或后续“重新获取验证码”开始，模块发送自定义邮件，邮件包含：
-
-- 一条自定义验证链接；
-- 一个 6 位安全验证码。
-
-点击自定义验证链接或输入 6 位验证码都可以完成验证，并同步 WHMCS 原生邮箱验证状态。
-
-## 未验证用户允许访问
-
-模块允许未验证用户访问：
-
-- 验证页；
-- 重发接口；
-- 验证码提交接口；
-- 退出登录；
-- 忘记密码；
-- WHMCS 原生邮箱验证回调；
-- 静态资源。
-
-客户中心首页、服务、账单、下单、发票支付、工单和资料修改会被跳转或阻止。
+- WHMCS 原生 Nexus、Six、Twenty-One 主题
+- Lagom Client Theme
 
 ## 安装
 
-1. 上传 `peakrack_email_gate/` 到 `modules/addons/peakrack_email_gate/`。
-2. 在 WHMCS 后台进入 **系统设置 > Addon Modules**。
+1. 将 `peakrack_email_gate/` 上传到 WHMCS 的 `modules/addons/peakrack_email_gate/`。
+2. 在 WHMCS 后台进入 **System Settings > Addon Modules**。
 3. 启用 **PeakRack Email Verification Gate**。
 4. 进入 **Addons > PeakRack Email Verification Gate**。
-5. 检查限流配置、邮件模板和后台语言。
-6. 保持 WHMCS 原生 **Email Verification** 开启。
+5. 检查模块开关、限流设置、邮件模板和后台语言。
+6. 确认 WHMCS 原生 **Email Verification** 仍保持开启。
 
-本地开发 checkout 中也同步了一份运行目录：`modules/addons/peakrack_email_gate`。公开发布时，安装包目录为 `peakrack_email_gate/`。
+## 使用方式
+
+模块启用后，未验证邮箱客户登录客户中心时会被引导到验证页。客户可以优先使用 WHMCS 原生验证邮件，也可以在验证页获取新的验证邮件。
+
+新的验证邮件包含两种验证方式：
+
+- 点击邮件中的验证按钮；
+- 在验证页输入邮件中的 6 位安全验证码。
+
+任意一种方式验证成功后，模块会同步 WHMCS 邮箱验证状态，并将客户带回原先尝试访问的页面。
+
+## 后台管理
+
+后台页面包含四个区域：
+
+- **设置**：配置模块开关、验证页拦截、下单阻止、冷却时间、有效期和邮件模板。
+- **记录**：查看客户验证状态、发送次数、错误次数和锁定状态。
+- **日志**：查看模块关键事件。
+- **工具**：解锁客户、清理过期 token、执行日志保留清理、轮换 HMAC 密钥。
 
 ## 升级
 
-详见 [UPGRADE.zh-CN.md](UPGRADE.zh-CN.md)。
+请查看 [UPGRADE.zh-CN.md](UPGRADE.zh-CN.md)。
 
-简要步骤：
-
-1. 备份 WHMCS 数据库。
-2. 用新版 `peakrack_email_gate/` 覆盖 `modules/addons/peakrack_email_gate/`。
-3. 进入一次 **Addons > PeakRack Email Verification Gate**，让模块执行结构和配置检查。
-4. 检查升级后的邮件模板。
-
-升级不会删除设置、验证记录或日志。
+升级前建议备份 WHMCS 数据库。升级不会删除设置、验证记录或日志。
 
 ## 卸载
 
-停用模块会保留设置、记录和日志。
-
-卸载函数默认也保留数据，只有管理员显式提交 `DELETE` 确认时才会删除模块数据。
-
-## 安全说明
-
-- 自定义验证链接 token 和 6 位验证码只保存 HMAC 哈希。
-- HMAC 密钥在启用模块时自动生成，可在后台工具中轮换。
-- 轮换 HMAC 密钥会让所有未使用的自定义链接和验证码失效。
-- 验证码错误次数和重发频率在服务端限制。
-- 成功验证后的返回地址会经过过滤，避免外部跳转。
-
-## GitHub 仓库信息建议
-
-推荐仓库描述：
-
-`WHMCS 9 邮箱验证拦截模块，支持自定义重发链接、6 位验证码、限流、锁定和中英双语模板。`
-
-推荐 GitHub topics：
-
-`whmcs`, `whmcs-addon`, `email-verification`, `peakrack`, `php83`, `lagom`, `security`
-
-本次建议发布 tag：
-
-`v1.1.1`
+停用模块不会删除设置、验证记录或日志。卸载函数默认也会保留数据，只有管理员显式确认删除时才会清理模块数据。
 
 ## 开源协议
 
-MIT。详见 [LICENSE](LICENSE)。
+本项目采用 MIT License，详见 [LICENSE](LICENSE)。

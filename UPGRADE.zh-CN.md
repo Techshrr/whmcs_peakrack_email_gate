@@ -1,5 +1,14 @@
 # 升级说明
 
+## 升级到 1.1.2
+
+1. 先备份 WHMCS 数据库。
+2. 用新版 `peakrack_email_gate/` 覆盖 `modules/addons/peakrack_email_gate/`。
+3. 进入 **Addons > PeakRack Email Verification Gate**，确认后台顶部已显示新的深色说明区。
+4. 如果后台仍显示旧布局，请清理 WHMCS 模板缓存后重试。
+
+从 1.1.1 升级到 1.1.2 不需要数据库迁移。
+
 ## 升级到 1.1.1
 
 1. 先备份 WHMCS 数据库。

@@ -5,4 +5,4 @@
 3. Open **Addons > PeakRack Email Verification Gate** once.
 4. Review email templates and rate-limit settings.
 
-Version 1.1.0 keeps settings, records, and logs. Old default email templates are upgraded automatically unless they appear to be custom administrator templates.
+Version 1.1.2 keeps settings, records, and logs. Old default email templates are upgraded automatically unless they appear to be custom administrator templates.

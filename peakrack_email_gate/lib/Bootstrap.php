@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.1';
+const PREG_VERSION = '1.1.2';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';

@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Upgrade to 1.1.2
+
+1. Back up the WHMCS database.
+2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
+3. Open **Addons > PeakRack Email Verification Gate** and confirm the new dark admin header is displayed.
+4. Clear the WHMCS template cache if the admin page still shows the previous header layout.
+
+No database migration is required from 1.1.1 to 1.1.2.
+
 ## Upgrade to 1.1.1
 
 1. Back up the WHMCS database.

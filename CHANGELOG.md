@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2 - 2026-05-24
+
+- Reworked the addon admin header into a dark product summary panel matching the PeakRack Turnstile Manager style.
+- Moved the version badge and admin language switch into the header panel.
+- Rewrote the English and Chinese README files for public repository visitors.
+- Removed repository-maintainer metadata suggestions from the public README.
+
 ## 1.1.1 - 2026-05-24
 
 - Added a live resend cooldown countdown on the client verification page.
@@ -20,7 +27,7 @@
 - Avoided browser-native pattern validation errors on code entry.
 - Added safer SendEmail failure rollback so failed email sends do not consume a resend or replace a previously active code.
 - Improved legacy `tblclients.email_verified` fallback by checking for `updated_at` before writing it.
-- Expanded English and Chinese README, upgrade notes, release notes, and recommended GitHub metadata.
+- Expanded English and Chinese README, upgrade notes, and release notes.
 
 ## 1.0.0 - 2026-05-24
 

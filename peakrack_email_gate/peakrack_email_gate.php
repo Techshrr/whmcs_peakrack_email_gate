@@ -336,23 +336,34 @@ function peakrack_email_gate_render_admin(array $settings, string $message, stri
     ob_start();
     ?>
     <style>
-        .preg-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
-        .preg-header h2 { margin-top: 0; }
-        .preg-header-actions { white-space: nowrap; padding-top: 4px; }
+        .preg-admin { max-width: 1180px; margin: 0; color: #263238; }
+        .preg-admin * { box-sizing: border-box; }
+        .preg-hero { position: relative; min-height: 128px; background: #0f172a; color: #fff; border-radius: 6px; padding: 22px 188px 22px 24px; margin: 0 0 18px; }
+        .preg-hero-main { max-width: 100%; }
+        .preg-hero h2 { margin: 0 0 8px; color: #fff; font-size: 22px; font-weight: 600; }
+        .preg-hero p { margin: 0; color: #cbd5e1; line-height: 1.6; font-size: 14px; }
+        .preg-hero-actions { position: absolute; top: 22px; right: 24px; width: 144px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .preg-version-badge { display: inline-flex; align-items: center; justify-content: center; min-height: 26px; border-radius: 999px; padding: 3px 10px; background: rgba(37,99,235,.18); color: #bfdbfe; border: 1px solid rgba(191,219,254,.35); font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .preg-lang { display: grid; grid-template-columns: 1fr 1fr; width: 132px; height: 38px; border: 1px solid rgba(203,213,225,.45); border-radius: 6px; overflow: hidden; background: rgba(255,255,255,.06); }
+        .preg-lang a { display: inline-flex; align-items: center; justify-content: center; min-width: 0; height: 38px; padding: 0 8px; color: #cbd5e1; text-decoration: none; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; }
+        .preg-lang a.active { background: #2563eb; color: #fff; }
         .preg-template-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
         .preg-template-panel { border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; background: #fff; }
         .preg-template-panel h3 { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
-        @media (max-width: 900px) { .preg-header { display: block; } .preg-header-actions { margin-top: 10px; } .preg-template-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .preg-hero { padding: 22px 20px; } .preg-hero-actions { position: static; width: auto; align-items: flex-start; margin-top: 14px; } .preg-template-grid { grid-template-columns: 1fr; } }
     </style>
     <div class="preg-admin">
-        <div class="preg-header">
-            <div>
-                <h2>PeakRack Email Verification Gate <small><?php echo peakrackEmailGateE(PREG_VERSION); ?></small></h2>
-                <p class="text-muted"><?php echo peakrackEmailGateE($t['subtitle']); ?></p>
+        <div class="preg-hero">
+            <div class="preg-hero-main">
+                <h2><?php echo peakrackEmailGateE($t['title']); ?></h2>
+                <p><?php echo peakrackEmailGateE($t['subtitle']); ?></p>
             </div>
-            <div class="preg-header-actions">
-                <a class="btn btn-default btn-sm<?php echo $language === 'en' ? ' active' : ''; ?>" href="<?php echo peakrackEmailGateE(peakrack_email_gate_admin_url('en')); ?>">English</a>
-                <a class="btn btn-default btn-sm<?php echo $language === 'zh' ? ' active' : ''; ?>" href="<?php echo peakrackEmailGateE(peakrack_email_gate_admin_url('zh')); ?>">中文</a>
+            <div class="preg-hero-actions">
+                <span class="preg-version-badge"><?php echo peakrackEmailGateE(sprintf($t['version'], PREG_VERSION)); ?></span>
+                <div class="preg-lang" aria-label="Admin language">
+                    <a class="<?php echo $language === 'zh' ? 'active' : ''; ?>" href="<?php echo peakrackEmailGateE(peakrack_email_gate_admin_url('zh')); ?>">中文</a>
+                    <a class="<?php echo $language === 'en' ? 'active' : ''; ?>" href="<?php echo peakrackEmailGateE(peakrack_email_gate_admin_url('en')); ?>">English</a>
+                </div>
             </div>
         </div>
 
@@ -587,7 +598,9 @@ function peakrack_email_gate_admin_texts(string $language): array
 {
     $texts = [
         'en' => [
-            'subtitle' => 'WHMCS native email verification stays enabled. This addon gates unverified users and provides custom resend links plus secure codes.',
+            'title' => 'PeakRack Email Verification Gate',
+            'subtitle' => 'Keeps WHMCS native email verification enabled while guiding unverified clients through a focused verification page. Custom resend emails include a secure link, a 6-digit code, cooldown controls, lockout protection, and automatic return to the client page they originally requested.',
+            'version' => 'Version %s',
             'settings' => 'Settings',
             'records' => 'Records',
             'logs' => 'Logs',
@@ -644,7 +657,9 @@ function peakrack_email_gate_admin_texts(string $language): array
             'no_records' => 'No records recorded yet.',
         ],
         'zh' => [
-            'subtitle' => '保持 WHMCS 原生邮箱验证开启。本模块负责拦截未验证用户，并提供自定义重发链接和安全验证码。',
+            'title' => 'PeakRack Email Verification Gate',
+            'subtitle' => '保持 WHMCS 原生邮箱验证开启，同时将未验证客户引导到独立验证页。自定义重发邮件包含安全链接和 6 位验证码，并提供冷却倒计时、错误锁定、防刷限制以及验证成功后返回原访问页面。',
+            'version' => '版本 %s',
             'settings' => '设置',
             'records' => '记录',
             'logs' => '日志',
