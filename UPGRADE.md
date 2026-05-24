@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Upgrade to 1.1.4
+
+1. Back up the WHMCS database.
+2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
+3. Clear the WHMCS template cache if the client verification page still shows old spacing or button text.
+4. Test the checkout flow with an unverified client and confirm the fallback countdown sends the client to the gate page if WHMCS cannot redirect immediately.
+
+No database migration is required from 1.1.3 to 1.1.4.
+
 ## Upgrade to 1.1.3
 
 1. Back up the WHMCS database.
@@ -28,7 +37,7 @@ No database migration is required from 1.1.1 to 1.1.2.
 1. Back up the WHMCS database.
 2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
 3. Clear WHMCS template cache if the client-area page still shows the old button text.
-4. Request a verification email and confirm the resend button counts down as `60`, `59`, `58` before it can be clicked again.
+4. Request a verification email and confirm the resend button counts down before it can be clicked again.
 
 No database migration is required from 1.1.0 to 1.1.1.
 

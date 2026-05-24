@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.4 - 2026-05-25
+
+- Tightened the email summary row on the client verification page so the label and address sit closer together.
+- Changed the resend cooldown display to `59 Get Code` / `59 获取验证码` while keeping the button width stable.
+- Fixed the logout link hover color on non-Lagom themes.
+- Added a 5-second checkout fallback countdown when WHMCS cannot send the immediate redirect header.
+- Preserves the checkout return target during the fallback countdown so verified clients can return to checkout with cart data intact.
+
 ## 1.1.3 - 2026-05-25
 
 - Changed checkout enforcement from an inline WHMCS validation error to a redirect to the email verification gate.
@@ -17,7 +25,7 @@
 ## 1.1.1 - 2026-05-24
 
 - Added a live resend cooldown countdown on the client verification page.
-- The resend button now shows only the remaining seconds during cooldown, for example `60`, `59`, `58`.
+- The resend button showed only the remaining seconds during cooldown in this release; 1.1.4 changed it to include the button label.
 - The resend button stays disabled until the countdown reaches zero, then automatically restores the normal resend label.
 - Server-side resend cooldown enforcement remains unchanged.
 

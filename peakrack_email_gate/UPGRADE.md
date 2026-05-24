@@ -5,4 +5,4 @@
 3. Open **Addons > PeakRack Email Verification Gate** once.
 4. Review email templates and rate-limit settings.
 
-Version 1.1.3 keeps settings, records, logs, and WHMCS cart session data. Old default email templates are upgraded automatically unless they appear to be custom administrator templates.
+Version 1.1.4 keeps settings, records, logs, and WHMCS cart session data. It only updates client-page spacing, resend cooldown display, checkout fallback countdown behavior, and the logout link hover style. Old default email templates are upgraded automatically unless they appear to be custom administrator templates.

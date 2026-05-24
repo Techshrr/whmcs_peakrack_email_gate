@@ -74,13 +74,23 @@ add_hook('ShoppingCartValidateCheckout', 1, static function (array $vars): array
             }
 
             $language = peakrackEmailGateNormalizeClientLanguage((string) ($context['language'] ?? ''), $vars);
-            return [$language === 'zh' ? '请先完成邮箱验证后再继续结账。' : 'Please verify your email address before continuing checkout.'];
+            return [peakrackEmailGateQueueCheckoutRedirect($returnUrl, $language)];
         }
     } catch (Throwable $e) {
         peakrackEmailGateLog('error', 'checkout_check_failed', 'Checkout email verification check failed.', [], ['error' => $e->getMessage()]);
     }
 
     return [];
+});
+
+add_hook('ClientAreaFooterOutput', 1, static function (array $vars): string {
+    try {
+        return peakrackEmailGateRenderPendingCheckoutRedirect();
+    } catch (Throwable $e) {
+        peakrackEmailGateLog('error', 'checkout_redirect_fallback_failed', 'Checkout verification redirect fallback failed.', [], ['error' => $e->getMessage()]);
+    }
+
+    return '';
 });
 
 add_hook('DailyCronJob', 1, static function (): void {

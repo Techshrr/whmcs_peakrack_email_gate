@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.3';
+const PREG_VERSION = '1.1.4';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -1210,6 +1210,51 @@ if (!function_exists('peakrackEmailGateRedirectToGate')) {
         $returnUrl = peakrackEmailGateRememberReturnUrl($returnUrl);
         $params = $returnUrl !== '' ? ['return' => $returnUrl] : [];
         header('Location: ' . peakrackEmailGateModuleUrl($params));
+    }
+}
+
+if (!function_exists('peakrackEmailGateQueueCheckoutRedirect')) {
+    function peakrackEmailGateQueueCheckoutRedirect(string $returnUrl, string $language): string
+    {
+        $returnUrl = peakrackEmailGateRememberReturnUrl($returnUrl);
+        $_SESSION['peakrack_email_gate_checkout_redirect'] = [
+            'return_url' => $returnUrl,
+            'language' => $language === 'zh' ? 'zh' : 'en',
+            'seconds' => 5,
+        ];
+
+        return peakrackEmailGateCheckoutRedirectMessage($language, 5);
+    }
+}
+
+if (!function_exists('peakrackEmailGateCheckoutRedirectMessage')) {
+    function peakrackEmailGateCheckoutRedirectMessage(string $language, int $seconds): string
+    {
+        return $language === 'zh'
+            ? '请先完成邮箱验证后再下单。' . $seconds . ' 即将前往验证页。'
+            : 'Please verify your email address before ordering. ' . $seconds . ' seconds until redirecting to email verification.';
+    }
+}
+
+if (!function_exists('peakrackEmailGateRenderPendingCheckoutRedirect')) {
+    function peakrackEmailGateRenderPendingCheckoutRedirect(): string
+    {
+        $data = $_SESSION['peakrack_email_gate_checkout_redirect'] ?? null;
+        if (!is_array($data)) {
+            return '';
+        }
+
+        unset($_SESSION['peakrack_email_gate_checkout_redirect']);
+
+        $returnUrl = peakrackEmailGateSanitizeReturnUrl((string) ($data['return_url'] ?? ''));
+        $params = $returnUrl !== '' ? ['return' => $returnUrl] : [];
+        $url = peakrackEmailGateModuleUrl($params);
+
+        $language = (string) ($data['language'] ?? 'en') === 'zh' ? 'zh' : 'en';
+        $seconds = max(1, min(30, (int) ($data['seconds'] ?? 5)));
+        $text = $language === 'zh' ? '即将前往验证页' : 'seconds until redirecting to email verification';
+
+        return '<script>(function(){var seconds=' . $seconds . ';var url=' . json_encode($url, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';var text=' . json_encode($text, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';var last=String(seconds)+" "+text;var node=null;var box=null;function locate(){var target=document.querySelector(".alert-danger,.errorbox,.clientalert");if(target&&document.createTreeWalker){var walker=document.createTreeWalker(target,NodeFilter.SHOW_TEXT);while((node=walker.nextNode())){if(node.nodeValue.indexOf(last)!==-1){return;}}node=null;}box=document.createElement("div");box.className="alert alert-warning peakrack-email-gate-checkout-redirect";box.style.margin="12px 0";box.style.fontWeight="600";if(target&&target.parentNode){target.parentNode.insertBefore(box,target.nextSibling);}else{document.body.insertBefore(box,document.body.firstChild);}}function render(){var next=String(seconds)+" "+text;if(!node&&!box){locate();}if(node){node.nodeValue=node.nodeValue.indexOf(last)!==-1?node.nodeValue.replace(last,next):node.nodeValue+" "+next;}else if(box){box.textContent=next;}last=next;}function run(){render();var timer=window.setInterval(function(){seconds-=1;if(seconds<=0){window.clearInterval(timer);window.location.href=url;return;}render();},1000);}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",run);}else{run();}})();</script>';
     }
 }
 
