@@ -14,6 +14,7 @@ It is designed for WHMCS sites that want clients to verify their email address b
 - Shows a plain numeric resend countdown during the 60-second cooldown.
 - Returns the client to the page they originally tried to access after successful verification.
 - Supports English and Chinese client text, email subjects, email bodies, and admin UI.
+- Redirects unverified checkout attempts to the verification gate and returns clients to checkout after verification without clearing cart contents.
 - Provides configurable code lifetime, link lifetime, hourly resend limit, failed-attempt lockout, and log retention.
 - Includes admin records, logs, unlock tools, expired-token cleanup, and HMAC secret rotation.
 - Can mirror key events to the WHMCS Activity Log.
@@ -47,6 +48,8 @@ It is designed for WHMCS sites that want clients to verify their email address b
 ## Client Flow
 
 When the module is enabled, unverified clients are redirected to the gate page after login. They can use the native WHMCS verification email first, or request a new custom email from the gate page.
+
+If an unverified client reaches checkout, the module redirects them to the verification gate instead of showing a checkout validation error. The current checkout URL is kept as the return target. WHMCS cart data remains in the same session, so selected products and applied promotion codes stay available when the client returns.
 
 The custom email supports two verification methods:
 

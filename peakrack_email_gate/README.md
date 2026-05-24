@@ -14,6 +14,7 @@ Keep WHMCS native Email Verification enabled.
 - Includes both a custom verification link and a 6-digit security code.
 - Stores custom tokens and codes only as HMAC hashes.
 - Provides a six-box code UI with automatic verification and redirect back to the originally requested page.
+- Redirects unverified checkout attempts to the gate page and returns clients to checkout after verification without clearing the WHMCS cart session.
 
 ## Admin
 

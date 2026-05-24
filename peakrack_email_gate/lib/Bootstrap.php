@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.2';
+const PREG_VERSION = '1.1.3';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -1201,6 +1201,15 @@ if (!function_exists('peakrackEmailGateModuleUrl')) {
     function peakrackEmailGateModuleUrl(array $params = []): string
     {
         return 'index.php?' . http_build_query(array_merge(['m' => PREG_MODULE], $params));
+    }
+}
+
+if (!function_exists('peakrackEmailGateRedirectToGate')) {
+    function peakrackEmailGateRedirectToGate(string $returnUrl = ''): void
+    {
+        $returnUrl = peakrackEmailGateRememberReturnUrl($returnUrl);
+        $params = $returnUrl !== '' ? ['return' => $returnUrl] : [];
+        header('Location: ' . peakrackEmailGateModuleUrl($params));
     }
 }
 

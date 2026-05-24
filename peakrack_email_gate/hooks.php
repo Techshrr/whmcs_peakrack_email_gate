@@ -40,9 +40,7 @@ add_hook('ClientAreaPage', 1, static function (array $vars): array {
         ]);
 
         if (!headers_sent()) {
-            $returnUrl = peakrackEmailGateSanitizeReturnUrl(peakrackEmailGateCurrentRelativeUrl());
-            $params = $returnUrl !== '' ? ['return' => $returnUrl] : [];
-            header('Location: ' . peakrackEmailGateModuleUrl($params));
+            peakrackEmailGateRedirectToGate(peakrackEmailGateCurrentRelativeUrl());
             exit;
         }
     } catch (Throwable $e) {
@@ -61,9 +59,22 @@ add_hook('ShoppingCartValidateCheckout', 1, static function (array $vars): array
 
         $context = peakrackEmailGateCurrentContext($vars);
         if (((int) ($context['client_id'] ?? 0) > 0 || (int) ($context['user_id'] ?? 0) > 0) && !peakrackEmailGateIsVerified($context)) {
-            peakrackEmailGateLog('warning', 'checkout_blocked', 'Checkout was blocked because email is not verified.', $context);
+            $returnUrl = peakrackEmailGateCurrentRelativeUrl();
+            if ($returnUrl === '') {
+                $returnUrl = 'cart.php?a=checkout';
+            }
+
+            peakrackEmailGateLog('warning', 'checkout_redirect', 'Checkout was redirected to email verification because email is not verified.', $context, [
+                'return_url' => $returnUrl,
+            ]);
+
+            if (!headers_sent()) {
+                peakrackEmailGateRedirectToGate($returnUrl);
+                exit;
+            }
+
             $language = peakrackEmailGateNormalizeClientLanguage((string) ($context['language'] ?? ''), $vars);
-            return [$language === 'zh' ? '请先完成邮箱验证后再下单。' : 'Please verify your email address before placing an order.'];
+            return [$language === 'zh' ? '请先完成邮箱验证后再继续结账。' : 'Please verify your email address before continuing checkout.'];
         }
     } catch (Throwable $e) {
         peakrackEmailGateLog('error', 'checkout_check_failed', 'Checkout email verification check failed.', [], ['error' => $e->getMessage()]);

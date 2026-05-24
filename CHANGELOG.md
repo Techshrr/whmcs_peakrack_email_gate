@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.3 - 2026-05-25
+
+- Changed checkout enforcement from an inline WHMCS validation error to a redirect to the email verification gate.
+- Stores the current checkout URL as the post-verification return target.
+- Keeps the WHMCS cart session untouched so cart items and applied promotions remain in place.
+- Falls back to the old validation error only if headers have already been sent and redirecting is no longer possible.
+
 ## 1.1.2 - 2026-05-24
 
 - Reworked the addon admin header into a dark product summary panel matching the PeakRack Turnstile Manager style.

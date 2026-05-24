@@ -1,5 +1,19 @@
 # Upgrade Notes
 
+## Upgrade to 1.1.3
+
+1. Back up the WHMCS database.
+2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
+3. Test checkout with an unverified client:
+   - add a product to the cart,
+   - apply a promotion code if needed,
+   - continue to checkout,
+   - confirm the client is redirected to the verification gate,
+   - complete email verification,
+   - confirm the client returns to checkout with cart contents and promotion still present.
+
+No database migration is required from 1.1.2 to 1.1.3.
+
 ## Upgrade to 1.1.2
 
 1. Back up the WHMCS database.
