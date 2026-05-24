@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.6';
+const PREG_VERSION = '1.1.7';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -37,7 +37,7 @@ if (!function_exists('peakrackEmailGateDefaults')) {
             'lockMinutes' => 15,
             'logRetentionDays' => 180,
             'maxLogs' => 10000,
-            'emailTemplateVersion' => '1.1.6',
+            'emailTemplateVersion' => '1.1.7',
             'resendButtonColor' => '#2563eb',
             'emailSubjectEn' => 'Verify your email address',
             'emailSubjectZh' => '请验证你的邮箱地址',
@@ -53,10 +53,10 @@ if (!function_exists('peakrackEmailGateDefaultEmailMessage')) {
     function peakrackEmailGateDefaultEmailMessage(string $language): string
     {
         if ($language === 'zh') {
-            return '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.5;"><tr><td style="padding:0 0 10px;">你好 {$client_name}，</td></tr><tr><td style="padding:0 0 14px;">为了保护你的账户安全，请验证你在 {$company_name} 的邮箱地址。</td></tr><tr><td style="padding:0 0 6px;color:#475467;font-size:14px;font-weight:700;">安全验证码</td></tr><tr><td style="padding:0 0 12px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></td></tr><tr><td style="padding:0 0 8px;color:#475467;font-size:14px;">也可以点击下方按钮完成邮箱验证。</td></tr><tr><td style="padding:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">验证邮箱地址</a></td></tr><tr><td style="padding:0 0 10px;color:#667085;font-size:13px;">验证码 {$code_minutes} 分钟内有效，验证链接 {$token_minutes} 分钟内有效。</td></tr><tr><td style="padding:0 0 6px;color:#667085;font-size:13px;">如果不是你本人操作，可以忽略本邮件。</td></tr><tr><td style="padding:0;">{$signature}</td></tr></table>';
+            return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.55;font-size:14px;"><p style="margin:0 0 12px;">你好 {$client_name}，</p><p style="margin:0 0 14px;">为了保护你的账户安全，请验证你在 {$company_name} 的邮箱地址。</p><p style="margin:0 0 6px;color:#344054;font-weight:700;">安全验证码</p><div style="margin:0 0 14px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></div><p style="margin:0 0 8px;color:#475467;">你也可以点击下方按钮完成邮箱验证。</p><p style="margin:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">验证邮箱地址</a></p><p style="margin:0 0 12px;color:#667085;font-size:13px;">验证码 {$code_minutes} 分钟内有效，验证链接 {$token_minutes} 分钟内有效。</p><p style="margin:0 0 14px;color:#667085;font-size:13px;">如果不是你本人操作，可以忽略本邮件。</p><div style="margin:0;">{$signature}</div></div>';
         }
 
-        return '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.5;"><tr><td style="padding:0 0 10px;">Hello {$client_name},</td></tr><tr><td style="padding:0 0 14px;">To keep your account secure, please verify the email address you use with {$company_name}.</td></tr><tr><td style="padding:0 0 6px;color:#475467;font-size:14px;font-weight:700;">Security code</td></tr><tr><td style="padding:0 0 12px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></td></tr><tr><td style="padding:0 0 8px;color:#475467;font-size:14px;">You can also verify your email address with the button below.</td></tr><tr><td style="padding:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">Verify email address</a></td></tr><tr><td style="padding:0 0 10px;color:#667085;font-size:13px;">The code expires in {$code_minutes} minutes. The verification link expires in {$token_minutes} minutes.</td></tr><tr><td style="padding:0 0 6px;color:#667085;font-size:13px;">If you did not request this, you can ignore this email.</td></tr><tr><td style="padding:0;">{$signature}</td></tr></table>';
+        return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.55;font-size:14px;"><p style="margin:0 0 12px;">Hello {$client_name},</p><p style="margin:0 0 14px;">To keep your account secure, please verify the email address you use with {$company_name}.</p><p style="margin:0 0 6px;color:#344054;font-weight:700;">Security code</p><div style="margin:0 0 14px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></div><p style="margin:0 0 8px;color:#475467;">You can also verify your email address with the button below.</p><p style="margin:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">Verify email address</a></p><p style="margin:0 0 12px;color:#667085;font-size:13px;">The code expires in {$code_minutes} minutes. The verification link expires in {$token_minutes} minutes.</p><p style="margin:0 0 14px;color:#667085;font-size:13px;">If you did not request this, you can ignore this email.</p><div style="margin:0;">{$signature}</div></div>';
     }
 }
 
@@ -219,7 +219,10 @@ if (!function_exists('peakrackEmailGateLooksLikeLegacyDefaultEmail')) {
             || str_contains($normalized, 'background: #0b63ce')
             || str_contains($normalized, 'background:#eff6ff')
             || str_contains($normalized, '也可以点击下方链接完成邮箱验证')
+            || str_contains($normalized, '也可以点击下方按钮完成邮箱验证')
             || str_contains($normalized, 'You can also verify your email address with the link below')
+            || str_contains($normalized, 'role="presentation"')
+            || str_contains($normalized, 'border-collapse:collapse')
             || str_contains($normalized, 'Verification code:')
             || str_contains($normalized, '6 位验证码')
             || str_contains($normalized, '6位验证码')) {

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.1.7 - 2026-05-25
+
+- Replaced the 1.1.6 table-based email body with a plain `div`/`p` fragment to avoid WHMCS email CSS table borders.
+- Kept the email body free of custom width wrappers so it does not affect the WHMCS email header or logo area.
+- Kept the compact spacing and the expiry note below the verification button.
+
 ## 1.1.6 - 2026-05-25
 
 - Removed the custom `max-width` wrapper from the default email body so WHMCS controls the email container width.
-- Rebuilt the default email body as a compact table-based email fragment without template newlines that can render as blank rows.
+- Rebuilt the default email body as a compact email fragment without template newlines that can render as blank rows.
 - Moved the code/link expiry note below the verification button.
 - Tightened the default email spacing around the greeting, security code, verification button, and ignore notice.
 
