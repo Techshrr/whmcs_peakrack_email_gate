@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Upgrade to 1.1.6
+
+1. Back up the WHMCS database.
+2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
+3. Open **Addons > PeakRack Email Verification Gate** once so the default email template can be normalized.
+4. Send one test verification email and confirm the message body follows the WHMCS email container width.
+
+No database migration is required from 1.1.5 to 1.1.6.
+
 ## Upgrade to 1.1.5
 
 1. Back up the WHMCS database.

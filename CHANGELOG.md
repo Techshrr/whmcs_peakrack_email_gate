@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.6 - 2026-05-25
+
+- Removed the custom `max-width` wrapper from the default email body so WHMCS controls the email container width.
+- Rebuilt the default email body as a compact table-based email fragment without template newlines that can render as blank rows.
+- Moved the code/link expiry note below the verification button.
+- Tightened the default email spacing around the greeting, security code, verification button, and ignore notice.
+
 ## 1.1.5 - 2026-05-25
 
 - Fixed Chinese email labels wrapping vertically on the client verification page.

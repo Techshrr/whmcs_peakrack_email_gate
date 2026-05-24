@@ -1,5 +1,14 @@
 # 升级说明
 
+## 升级到 1.1.6
+
+1. 先备份 WHMCS 数据库。
+2. 用新版 `peakrack_email_gate/` 覆盖 `modules/addons/peakrack_email_gate/`。
+3. 进入一次 **Addons > PeakRack Email Verification Gate**，让模块刷新默认邮件模板。
+4. 发送一封测试验证邮件，确认邮件正文宽度跟随 WHMCS 系统邮件容器。
+
+从 1.1.5 升级到 1.1.6 不需要数据库迁移。
+
 ## 升级到 1.1.5
 
 1. 先备份 WHMCS 数据库。
