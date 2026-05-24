@@ -26,6 +26,7 @@ Target runtime:
 - HMAC-only storage for custom links and security codes; no plaintext token or code is stored.
 - 10-minute code lifetime and 30-minute custom link lifetime by default.
 - 60-second resend cooldown and 5 resends per hour by default.
+- Live resend button countdown during cooldown, shown as plain remaining seconds.
 - 5 failed code attempts, then a 15-minute lock by default.
 - WHMCS Local API `SendEmail` with `customsubject`, `custommessage`, and `customvars`.
 - WHMCS 9 user email verification sync first, with `tblusers` field-detection fallback and legacy `tblclients.email_verified` sync where available.
@@ -108,7 +109,7 @@ Recommended GitHub topics:
 
 Recommended release tag for this build:
 
-`v1.1.0`
+`v1.1.1`
 
 ## License
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1 - 2026-05-24
+
+- Added a live resend cooldown countdown on the client verification page.
+- The resend button now shows only the remaining seconds during cooldown, for example `60`, `59`, `58`.
+- The resend button stays disabled until the countdown reaches zero, then automatically restores the normal resend label.
+- Server-side resend cooldown enforcement remains unchanged.
+
 ## 1.1.0 - 2026-05-24
 
 - Redesigned the default English and Chinese verification email templates.

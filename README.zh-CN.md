@@ -26,6 +26,7 @@ PeakRack Email Verification Gate 是一个适用于 WHMCS 9 的邮箱验证拦�
 - 自定义 token 和 6 位验证码只保存 HMAC 哈希，不明文入库。
 - 默认验证码 10 分钟有效，自定义链接 30 分钟有效。
 - 默认重发冷却 60 秒，每小时最多 5 次。
+- 重发冷却期间按钮显示纯数字倒计时，例如 `60`、`59`、`58`，倒计时结束后自动恢复可点击。
 - 默认验证码错误最多 5 次，超过锁定 15 分钟。
 - 邮件优先使用 WHMCS Local API `SendEmail`，支持 `customsubject`、`custommessage`、`customvars`。
 - 同步 WHMCS 9 用户邮箱验证状态，优先尝试 User Model，再检测 `tblusers` 字段 fallback，并同步旧版 `tblclients.email_verified`。
@@ -108,7 +109,7 @@ PeakRack Email Verification Gate 是一个适用于 WHMCS 9 的邮箱验证拦�
 
 本次建议发布 tag：
 
-`v1.1.0`
+`v1.1.1`
 
 ## 开源协议
 

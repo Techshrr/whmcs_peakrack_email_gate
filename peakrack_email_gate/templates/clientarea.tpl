@@ -82,7 +82,7 @@
                             <input type="hidden" name="token" value="{$prgate.token|escape}">
                             <input type="hidden" name="return_url" value="{$prgate.returnUrl|escape}">
                             <input type="hidden" name="preg_client_action" value="resend">
-                            <button type="submit" class="btn {if $prgate.record.resend_total > 0}btn-default{else}btn-primary{/if}" {if $prgate.record.cooldown_wait > 0}disabled{/if}>{if $prgate.record.resend_total > 0}{$prgate.text.resend|escape}{else}{$prgate.text.get_code|escape}{/if}</button>
+                            <button type="submit" id="preg-resend-button" class="btn {if $prgate.record.resend_total > 0}btn-default{else}btn-primary{/if}" data-cooldown="{$prgate.record.cooldown_wait|intval}" data-ready-label="{if $prgate.record.resend_total > 0}{$prgate.text.resend|escape}{else}{$prgate.text.get_code|escape}{/if}" {if $prgate.record.cooldown_wait > 0}disabled{/if}>{if $prgate.record.cooldown_wait > 0}{$prgate.record.cooldown_wait|intval}{elseif $prgate.record.resend_total > 0}{$prgate.text.resend|escape}{else}{$prgate.text.get_code|escape}{/if}</button>
                         </form>
                         <a href="{$prgate.logoutUrl|escape}" class="btn btn-link">{$prgate.text.logout|escape}</a>
                     </div>
@@ -98,7 +98,10 @@
                     var inputs = Array.prototype.slice.call(form.querySelectorAll('.preg-code-digit'));
                     var hidden = document.getElementById('preg-verification-code');
                     var statusBox = document.getElementById('preg-code-status');
+                    var resendButton = document.getElementById('preg-resend-button');
                     var verifying = false;
+
+                    initResendCooldown();
 
                     form.addEventListener('submit', function (event) {
                         event.preventDefault();
@@ -124,6 +127,35 @@
                         inputs.forEach(function (input) {
                             input.disabled = disabled;
                         });
+                    }
+
+                    function initResendCooldown() {
+                        if (!resendButton) {
+                            return;
+                        }
+
+                        var remaining = parseInt(resendButton.getAttribute('data-cooldown') || '0', 10);
+                        if (!remaining || remaining <= 0) {
+                            return;
+                        }
+
+                        var readyLabel = resendButton.getAttribute('data-ready-label') || resendButton.textContent;
+                        resendButton.disabled = true;
+                        resendButton.textContent = String(remaining);
+
+                        var timer = window.setInterval(function () {
+                            remaining -= 1;
+                            if (remaining <= 0) {
+                                window.clearInterval(timer);
+                                resendButton.disabled = false;
+                                resendButton.textContent = readyLabel;
+                                resendButton.setAttribute('data-cooldown', '0');
+                                return;
+                            }
+
+                            resendButton.textContent = String(remaining);
+                            resendButton.setAttribute('data-cooldown', String(remaining));
+                        }, 1000);
                     }
 
                     function submitCode() {

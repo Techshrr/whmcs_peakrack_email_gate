@@ -25,12 +25,12 @@ Recommended topics:
 
 Recommended release tag:
 
-`v1.1.0`
+`v1.1.1`
 
 Example commands after this directory is pushed as a Git repository:
 
 ```powershell
 gh repo edit Techshrr/whmcs_peakrack_email_gate --description "WHMCS 9 email verification gate with custom resend links, six-digit codes, rate limits, and bilingual templates." --homepage "https://www.peakrack.com" --add-topic whmcs --add-topic whmcs-addon --add-topic email-verification --add-topic peakrack --add-topic php82 --add-topic php83 --add-topic lagom --add-topic security
-git tag v1.1.0
+git tag v1.1.1
 git push origin main --tags
 ```
