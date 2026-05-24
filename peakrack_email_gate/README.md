@@ -10,7 +10,7 @@ Keep WHMCS native Email Verification enabled.
 
 - Gates unverified logged-in users after registration.
 - Keeps the first registration email as the native WHMCS verification email.
-- Sends custom verification emails only when the user clicks `Get Code` / `Get New Code`.
+- Sends custom verification emails only when the user clicks `Get Code`.
 - Includes both a custom verification link and a 6-digit security code.
 - Stores custom tokens and codes only as HMAC hashes.
 - Provides a six-box code UI with automatic verification and redirect back to the originally requested page.

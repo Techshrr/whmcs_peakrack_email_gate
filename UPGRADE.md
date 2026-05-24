@@ -1,5 +1,15 @@
 # Upgrade Notes
 
+## Upgrade to 1.1.5
+
+1. Back up the WHMCS database.
+2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
+3. Open **Addons > PeakRack Email Verification Gate** once so the new button color setting and email defaults are normalized.
+4. Review the English and Chinese email templates if you previously customized them.
+5. Clear the WHMCS template cache if the client verification page still shows the old label layout.
+
+No database migration is required from 1.1.4 to 1.1.5.
+
 ## Upgrade to 1.1.4
 
 1. Back up the WHMCS database.

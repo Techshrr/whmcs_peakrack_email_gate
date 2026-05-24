@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.5 - 2026-05-25
+
+- Fixed Chinese email labels wrapping vertically on the client verification page.
+- Kept the resend button label as `Get Code` / `获取验证码` after cooldown ends.
+- Added an admin color picker for the client `Get Code` button.
+- Refined the default verification email layout with the security code above the verification link.
+- Replaced the solid blue email blocks with lighter, more transactional email styling.
+
 ## 1.1.4 - 2026-05-25
 
 - Tightened the email summary row on the client verification page so the label and address sit closer together.

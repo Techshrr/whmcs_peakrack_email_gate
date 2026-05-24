@@ -11,7 +11,7 @@ It is designed for WHMCS sites that want clients to verify their email address b
 - Sends a custom verification email only when the client requests a new code from the gate page.
 - Includes both a verification button and a six-digit security code in the custom email.
 - Provides six-box code entry with auto-advance, paste support, and automatic verification.
-- Shows a resend cooldown such as `59 Get Code` while keeping the action buttons from shifting.
+- Shows a resend cooldown such as `59 Get Code` while keeping the action buttons from shifting; the ready button color is configurable in admin.
 - Returns the client to the page they originally tried to access after successful verification.
 - Supports English and Chinese client text, email subjects, email bodies, and admin UI.
 - Redirects unverified checkout attempts to the verification gate and returns clients to checkout after verification without clearing cart contents.

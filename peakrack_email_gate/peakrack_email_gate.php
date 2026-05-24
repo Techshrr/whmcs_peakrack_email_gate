@@ -277,6 +277,7 @@ function peakrack_email_gate_clientarea(array $vars): array
                 'returnUrl' => $returnUrl,
                 'settings' => [
                     'notice' => $language === 'zh' ? $settings['clientNoticeZh'] : $settings['clientNoticeEn'],
+                    'resendButtonColor' => (string) $settings['resendButtonColor'],
                     'cooldownSeconds' => (int) $settings['cooldownSeconds'],
                     'codeLifetimeMinutes' => (int) $settings['codeLifetimeMinutes'],
                     'tokenLifetimeMinutes' => (int) $settings['tokenLifetimeMinutes'],
@@ -314,6 +315,8 @@ function peakrack_email_gate_settings_from_post(array $current): array
     foreach (['cooldownSeconds', 'hourlyLimit', 'codeLifetimeMinutes', 'tokenLifetimeMinutes', 'maxFailedAttempts', 'lockMinutes', 'logRetentionDays', 'maxLogs'] as $key) {
         $settings[$key] = (int) ($_POST[$key] ?? $settings[$key] ?? 0);
     }
+
+    $settings['resendButtonColor'] = peakrackEmailGateNormalizeHexColor((string) ($_POST['resendButtonColor'] ?? $settings['resendButtonColor'] ?? '#2563eb'));
 
     foreach (['emailSubjectEn', 'emailSubjectZh', 'emailMessageEn', 'emailMessageZh', 'clientNoticeEn', 'clientNoticeZh'] as $key) {
         $settings[$key] = trim((string) ($_POST[$key] ?? $settings[$key] ?? ''));
@@ -401,6 +404,9 @@ function peakrack_email_gate_render_admin(array $settings, string $message, stri
                         <?php echo peakrack_email_gate_admin_number('lockMinutes', $t['lock_minutes'], (int) $settings['lockMinutes']); ?>
                         <?php echo peakrack_email_gate_admin_number('logRetentionDays', $t['log_retention'], (int) $settings['logRetentionDays']); ?>
                         <?php echo peakrack_email_gate_admin_number('maxLogs', $t['max_logs'], (int) $settings['maxLogs']); ?>
+                    </div>
+                    <div class="row">
+                        <?php echo peakrack_email_gate_admin_color_input('resendButtonColor', $t['resend_button_color'], (string) $settings['resendButtonColor']); ?>
                     </div>
                     <div class="preg-template-grid">
                         <div class="preg-template-panel">
@@ -545,6 +551,12 @@ function peakrack_email_gate_admin_text_input(string $name, string $label, strin
     return '<div class="form-group"><label>' . peakrackEmailGateE($label) . '</label><input type="text" class="form-control" name="' . peakrackEmailGateE($name) . '" value="' . peakrackEmailGateE($value) . '"></div>';
 }
 
+function peakrack_email_gate_admin_color_input(string $name, string $label, string $value): string
+{
+    $value = peakrackEmailGateNormalizeHexColor($value);
+    return '<div class="col-sm-3 form-group"><label>' . peakrackEmailGateE($label) . '</label><input type="color" class="form-control" style="height:34px;padding:3px;" name="' . peakrackEmailGateE($name) . '" value="' . peakrackEmailGateE($value) . '"></div>';
+}
+
 function peakrack_email_gate_admin_textarea(string $name, string $label, string $value, int $rows): string
 {
     return '<div class="form-group"><label>' . peakrackEmailGateE($label) . '</label><textarea class="form-control" rows="' . $rows . '" name="' . peakrackEmailGateE($name) . '">' . peakrackEmailGateE($value) . '</textarea></div>';
@@ -617,6 +629,7 @@ function peakrack_email_gate_admin_texts(string $language): array
             'lock_minutes' => 'Lock minutes',
             'log_retention' => 'Log retention days',
             'max_logs' => 'Maximum log rows',
+            'resend_button_color' => 'Get Code button color',
             'admin_language' => 'Admin language',
             'english_template' => 'English Email & Notice',
             'chinese_template' => 'Chinese Email & Notice',
@@ -676,6 +689,7 @@ function peakrack_email_gate_admin_texts(string $language): array
             'lock_minutes' => '锁定分钟数',
             'log_retention' => '日志保留天数',
             'max_logs' => '最大日志行数',
+            'resend_button_color' => '获取验证码按钮颜色',
             'admin_language' => '后台语言',
             'english_template' => '英文邮件与提示',
             'chinese_template' => '中文邮件与提示',
@@ -749,7 +763,7 @@ function peakrack_email_gate_client_texts(string $language): array
             'email_label' => 'Email address',
             'code_label' => 'Security code',
             'get_code' => 'Get Code',
-            'resend' => 'Get New Code',
+            'resend' => 'Get Code',
             'verify_code' => 'Verify Automatically',
             'verifying' => 'Checking code...',
             'continue' => 'Continue to Client Area',
@@ -789,7 +803,7 @@ function peakrack_email_gate_client_texts(string $language): array
             'email_label' => '邮箱地址',
             'code_label' => '安全验证码',
             'get_code' => '获取验证码',
-            'resend' => '重新获取验证码',
+            'resend' => '获取验证码',
             'verify_code' => '自动验证',
             'verifying' => '正在核对验证码...',
             'continue' => '进入客户中心',

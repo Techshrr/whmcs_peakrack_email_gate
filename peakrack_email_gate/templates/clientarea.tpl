@@ -7,8 +7,8 @@
 <style>
     .preg-email-gate .preg-summary {
         display: grid;
-        grid-template-columns: max-content minmax(0, 1fr);
-        column-gap: 18px;
+        grid-template-columns: minmax(72px, max-content) minmax(0, 1fr);
+        column-gap: 16px;
         row-gap: 8px;
         align-items: baseline;
         margin: 0 0 18px;
@@ -22,6 +22,10 @@
         padding-left: 0;
         padding-right: 0;
         margin-bottom: 0;
+    }
+    .preg-email-gate .preg-summary dt {
+        white-space: nowrap;
+        word-break: keep-all;
     }
     .preg-email-gate .preg-code-box { max-width: 430px; }
     .preg-email-gate .preg-code-inputs { display: flex; gap: 10px; margin: 8px 0 0; }
@@ -42,6 +46,20 @@
     .preg-email-gate .preg-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
     .preg-email-gate .preg-actions form { margin: 0; }
     .preg-email-gate .preg-resend-button { min-width: 158px; text-align: center; white-space: nowrap; }
+    .preg-email-gate .preg-resend-button:not(:disabled),
+    .preg-email-gate .preg-resend-button:not(:disabled):hover,
+    .preg-email-gate .preg-resend-button:not(:disabled):focus {
+        background: var(--preg-resend-color, #2563eb);
+        border-color: var(--preg-resend-color, #2563eb);
+        color: #fff;
+        box-shadow: none;
+    }
+    .preg-email-gate .preg-resend-button:disabled {
+        background: #f3f4f6 !important;
+        border-color: #f3f4f6 !important;
+        color: #98a2b3 !important;
+        opacity: 1;
+    }
     .preg-email-gate .preg-logout-link,
     .preg-email-gate .preg-logout-link:hover,
     .preg-email-gate .preg-logout-link:focus,
@@ -54,6 +72,7 @@
     }
     .preg-email-gate .preg-code-status { margin-top: 12px; margin-bottom: 0; }
     @media (max-width: 640px) {
+        .preg-email-gate .preg-summary { grid-template-columns: minmax(68px, max-content) minmax(0, 1fr); }
         .preg-email-gate .preg-code-box { max-width: 100%; }
         .preg-email-gate .preg-code-inputs { gap: 6px; }
         .preg-email-gate .preg-code-digit { width: 44px; height: 50px; font-size: 20px; }
@@ -71,7 +90,7 @@
         </div>
     </div>
 {else}
-    <div class="panel panel-default card mb-3 preg-email-gate">
+    <div class="panel panel-default card mb-3 preg-email-gate" style="--preg-resend-color: {$prgate.settings.resendButtonColor|escape};">
         <div class="panel-heading card-header">
             <h3 class="panel-title card-title m-0">{$prgate.text.status_title|escape}</h3>
         </div>
@@ -108,7 +127,7 @@
                             <input type="hidden" name="token" value="{$prgate.token|escape}">
                             <input type="hidden" name="return_url" value="{$prgate.returnUrl|escape}">
                             <input type="hidden" name="preg_client_action" value="resend">
-                            <button type="submit" id="preg-resend-button" class="btn preg-resend-button {if $prgate.record.resend_total > 0}btn-default{else}btn-primary{/if}" data-cooldown="{$prgate.record.cooldown_wait|intval}" data-cooldown-label="{$prgate.text.get_code|escape}" data-ready-label="{if $prgate.record.resend_total > 0}{$prgate.text.resend|escape}{else}{$prgate.text.get_code|escape}{/if}" {if $prgate.record.cooldown_wait > 0}disabled{/if}>{if $prgate.record.cooldown_wait > 0}{$prgate.record.cooldown_wait|intval} {$prgate.text.get_code|escape}{elseif $prgate.record.resend_total > 0}{$prgate.text.resend|escape}{else}{$prgate.text.get_code|escape}{/if}</button>
+                            <button type="submit" id="preg-resend-button" class="btn preg-resend-button" data-cooldown="{$prgate.record.cooldown_wait|intval}" data-cooldown-label="{$prgate.text.get_code|escape}" data-ready-label="{$prgate.text.get_code|escape}" {if $prgate.record.cooldown_wait > 0}disabled{/if}>{if $prgate.record.cooldown_wait > 0}{$prgate.record.cooldown_wait|intval} {$prgate.text.get_code|escape}{else}{$prgate.text.get_code|escape}{/if}</button>
                         </form>
                         <a href="{$prgate.logoutUrl|escape}" class="btn btn-link preg-logout-link">{$prgate.text.logout|escape}</a>
                     </div>

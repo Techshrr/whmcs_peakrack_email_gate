@@ -1,5 +1,15 @@
 # 升级说明
 
+## 升级到 1.1.5
+
+1. 先备份 WHMCS 数据库。
+2. 用新版 `peakrack_email_gate/` 覆盖 `modules/addons/peakrack_email_gate/`。
+3. 进入一次 **Addons > PeakRack Email Verification Gate**，让模块补齐新的按钮颜色设置和邮件默认模板。
+4. 如果你之前手动改过中英文邮件模板，请升级后再检查一次模板内容。
+5. 如果客户验证页仍显示旧的邮箱标签排版，请清理 WHMCS 模板缓存。
+
+从 1.1.4 升级到 1.1.5 不需要数据库迁移。
+
 ## 升级到 1.1.4
 
 1. 先备份 WHMCS 数据库。

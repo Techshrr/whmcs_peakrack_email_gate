@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.4';
+const PREG_VERSION = '1.1.5';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -37,7 +37,8 @@ if (!function_exists('peakrackEmailGateDefaults')) {
             'lockMinutes' => 15,
             'logRetentionDays' => 180,
             'maxLogs' => 10000,
-            'emailTemplateVersion' => '1.1.0',
+            'emailTemplateVersion' => '1.1.5',
+            'resendButtonColor' => '#2563eb',
             'emailSubjectEn' => 'Verify your email address',
             'emailSubjectZh' => '请验证你的邮箱地址',
             'emailMessageEn' => peakrackEmailGateDefaultEmailMessage('en'),
@@ -54,22 +55,26 @@ if (!function_exists('peakrackEmailGateDefaultEmailMessage')) {
         if ($language === 'zh') {
             return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.65;max-width:640px;">'
                 . "\n" . '<p style="margin:0 0 16px;">你好 {$client_name}，</p>'
-                . "\n" . '<p style="margin:0 0 18px;">为了保护你的账户安全，请验证你在 {$company_name} 的邮箱地址。</p>'
-                . "\n" . '<p style="margin:0 0 24px;"><a href="{$verification_link}" style="display:inline-block;background:#0b63ce;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:6px;font-weight:700;">验证邮箱地址</a></p>'
+                . "\n" . '<p style="margin:0 0 20px;">为了保护你的账户安全，请验证你在 {$company_name} 的邮箱地址。</p>'
                 . "\n" . '<p style="margin:0 0 8px;color:#475467;font-size:14px;font-weight:700;">安全验证码</p>'
-                . "\n" . '<div style="display:inline-block;background:#0b63ce;color:#ffffff;border-radius:8px;padding:14px 20px;font-family:Consolas,Monaco,monospace;font-size:30px;font-weight:800;letter-spacing:7px;line-height:1;">{$verification_code}</div>'
-                . "\n" . '<p style="margin:18px 0 0;color:#667085;font-size:13px;">验证码 {$code_minutes} 分钟内有效，验证链接 {$token_minutes} 分钟内有效。如果不是你本人操作，可以忽略本邮件。</p>'
+                . "\n" . '<div style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:12px 18px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</div>'
+                . "\n" . '<p style="margin:14px 0 18px;color:#667085;font-size:13px;">验证码 {$code_minutes} 分钟内有效，验证链接 {$token_minutes} 分钟内有效。</p>'
+                . "\n" . '<p style="margin:0 0 8px;color:#475467;font-size:14px;">也可以点击下方链接完成邮箱验证。</p>'
+                . "\n" . '<p style="margin:0;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">验证邮箱地址</a></p>'
+                . "\n" . '<p style="margin:18px 0 0;color:#667085;font-size:13px;">如果不是你本人操作，可以忽略本邮件。</p>'
                 . "\n" . '<p style="margin:22px 0 0;">{$signature}</p>'
                 . "\n" . '</div>';
         }
 
         return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.65;max-width:640px;">'
             . "\n" . '<p style="margin:0 0 16px;">Hello {$client_name},</p>'
-            . "\n" . '<p style="margin:0 0 18px;">To keep your account secure, please verify the email address you use with {$company_name}.</p>'
-            . "\n" . '<p style="margin:0 0 24px;"><a href="{$verification_link}" style="display:inline-block;background:#0b63ce;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:6px;font-weight:700;">Verify email address</a></p>'
+            . "\n" . '<p style="margin:0 0 20px;">To keep your account secure, please verify the email address you use with {$company_name}.</p>'
             . "\n" . '<p style="margin:0 0 8px;color:#475467;font-size:14px;font-weight:700;">Security code</p>'
-            . "\n" . '<div style="display:inline-block;background:#0b63ce;color:#ffffff;border-radius:8px;padding:14px 20px;font-family:Consolas,Monaco,monospace;font-size:30px;font-weight:800;letter-spacing:7px;line-height:1;">{$verification_code}</div>'
-            . "\n" . '<p style="margin:18px 0 0;color:#667085;font-size:13px;">The code expires in {$code_minutes} minutes. The verification link expires in {$token_minutes} minutes. If you did not request this, you can ignore this email.</p>'
+            . "\n" . '<div style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:12px 18px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</div>'
+            . "\n" . '<p style="margin:14px 0 18px;color:#667085;font-size:13px;">The code expires in {$code_minutes} minutes. The verification link expires in {$token_minutes} minutes.</p>'
+            . "\n" . '<p style="margin:0 0 8px;color:#475467;font-size:14px;">You can also verify your email address with the link below.</p>'
+            . "\n" . '<p style="margin:0;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">Verify email address</a></p>'
+            . "\n" . '<p style="margin:18px 0 0;color:#667085;font-size:13px;">If you did not request this, you can ignore this email.</p>'
             . "\n" . '<p style="margin:22px 0 0;">{$signature}</p>'
             . "\n" . '</div>';
     }
@@ -196,9 +201,10 @@ if (!function_exists('peakrackEmailGateMergeSettings')) {
         $settings['logRetentionDays'] = peakrackEmailGateClampInt($settings['logRetentionDays'] ?? 180, 0, 3650, 180);
         $settings['maxLogs'] = peakrackEmailGateClampInt($settings['maxLogs'] ?? 10000, 0, 1000000, 10000);
 
-        foreach (['hmacSecret', 'emailTemplateVersion', 'emailSubjectEn', 'emailSubjectZh', 'emailMessageEn', 'emailMessageZh', 'clientNoticeEn', 'clientNoticeZh'] as $key) {
+        foreach (['hmacSecret', 'emailTemplateVersion', 'resendButtonColor', 'emailSubjectEn', 'emailSubjectZh', 'emailMessageEn', 'emailMessageZh', 'clientNoticeEn', 'clientNoticeZh'] as $key) {
             $settings[$key] = (string) ($settings[$key] ?? $defaults[$key] ?? '');
         }
+        $settings['resendButtonColor'] = peakrackEmailGateNormalizeHexColor($settings['resendButtonColor'], $defaults['resendButtonColor']);
 
         foreach (['emailSubjectEn', 'emailSubjectZh', 'emailMessageEn', 'emailMessageZh', 'clientNoticeEn', 'clientNoticeZh'] as $key) {
             $settings[$key] = peakrackEmailGateNormalizeEditableText((string) $settings[$key]);
@@ -229,6 +235,8 @@ if (!function_exists('peakrackEmailGateLooksLikeLegacyDefaultEmail')) {
         $normalized = peakrackEmailGateNormalizeEditableText($message);
         if (str_contains($normalized, 'font-size:24px;letter-spacing:4px;')
             || str_contains($normalized, 'font-size:24px; letter-spacing:4px;')
+            || str_contains($normalized, 'background:#0b63ce')
+            || str_contains($normalized, 'background: #0b63ce')
             || str_contains($normalized, 'Verification code:')
             || str_contains($normalized, '6 位验证码')
             || str_contains($normalized, '6位验证码')) {
@@ -1445,6 +1453,18 @@ if (!function_exists('peakrackEmailGateClampInt')) {
         }
 
         return max($min, min($max, (int) $value));
+    }
+}
+
+if (!function_exists('peakrackEmailGateNormalizeHexColor')) {
+    function peakrackEmailGateNormalizeHexColor(string $value, string $default = '#2563eb'): string
+    {
+        $value = trim($value);
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $value)) {
+            return strtolower($value);
+        }
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $default) ? strtolower($default) : '#2563eb';
     }
 }
 
