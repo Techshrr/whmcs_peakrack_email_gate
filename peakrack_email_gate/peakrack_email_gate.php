@@ -1,9 +1,15 @@
 <?php
+// SPDX-License-Identifier: Apache-2.0
 
 /**
- * PeakRack Email Verification Gate addon module for WHMCS.
+ * PeakRack Email Verification Gate
  *
- * Target runtime: WHMCS 9.0.3 / PHP 8.2-8.3.
+ * Official repository:
+ * https://github.com/Techshrr/whmcs_peakrack_email_gate
+ *
+ * Copyright 2026 PeakRack.
+ * Licensed under the Apache License, Version 2.0.
+ * See the LICENSE and NOTICE files for details.
  */
 
 if (!defined('WHMCS')) {

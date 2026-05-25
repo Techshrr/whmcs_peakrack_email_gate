@@ -1,80 +1,93 @@
 # PeakRack Email Verification Gate
 
-PeakRack Email Verification Gate 是一款 WHMCS 邮箱验证增强模块。它保留 WHMCS 原生邮箱验证机制，同时为未完成验证的客户提供更清晰的拦截页、自定义重发邮件、6 位验证码输入和后台审计能力。
+> 官方仓库：https://github.com/Techshrr/whmcs_peakrack_email_gate
+> 许可证：Apache License 2.0
 
-模块适用于需要先完成邮箱验证再开放完整客户中心功能的 WHMCS 站点，尤其适合希望降低未验证账号下单、提交工单或访问账单页面风险的业务场景。
+PeakRack Email Verification Gate 是一个 WHMCS 插件，用于在指定客户区动作前把未验证邮箱的客户引导到邮箱验证页面。
 
-## 主要功能
+## 项目说明
 
-- 登录后自动识别未验证邮箱客户，并引导到独立验证页。
-- 新注册客户的第一封验证邮件仍由 WHMCS 原生流程发送，减少注册流程干扰。
-- 客户可在验证页获取新的验证邮件，邮件内同时包含验证按钮和 6 位安全验证码。
-- 验证码输入采用 6 格布局，支持自动跳格、粘贴和自动核对。
-- 重发按钮冷却时显示类似 `59 获取验证码` 的倒计时，并保持操作按钮位置稳定；按钮可点击状态的颜色可在后台配置。
-- 验证成功后自动返回客户原先尝试访问的页面。
-- 未验证客户进入结账时会跳转到验证页，验证完成后返回结账页，不清空购物车商品和已应用优惠。
-- 支持中文和英文客户提示、邮件标题、邮件正文和后台界面。
-- 支持验证码有效期、验证链接有效期、每小时重发次数、错误锁定时间等配置。
-- 后台提供验证记录、事件日志、用户解锁、过期数据清理和 HMAC 密钥轮换工具。
-- 关键事件可同步写入 WHMCS Activity Log，便于管理员追踪。
+本插件保留 WHMCS 原生邮箱验证机制，并为未验证客户增加独立验证页。客户可以在该页面请求自定义验证邮件，邮件中包含签名链接和六位验证码。
 
-## 安全设计
+插件会把设置、验证记录和日志保存到专用模块表中。停用插件不会删除这些数据；卸载时只有管理员明确确认删除后才会移除数据表。
 
-- 自定义验证链接 token 和 6 位验证码只保存 HMAC 哈希，不保存明文。
-- 验证码错误次数达到上限后会临时锁定。
-- 重发频率由前端倒计时和服务端限制同时控制。
-- 验证成功后的返回地址会经过过滤，避免外部跳转。
-- HMAC 密钥可在后台手动轮换，轮换后未使用的自定义链接和验证码会失效。
+## 功能特性
 
-## 兼容环境
+- 将已登录但邮箱未验证的客户跳转到独立验证页。
+- 拦截未验证客户的结账动作，验证后返回结账页。
+- 发送包含签名链接和六位验证码的自定义验证邮件。
+- 验证链接和验证码仅以 HMAC 哈希保存。
+- 支持重发冷却、每小时重发限制、验证码错误锁定和 token 过期。
+- 提供英文和中文客户文本、邮件模板和后台界面。
+- 提供后台记录、日志、解锁、清理和 HMAC 密钥轮换工具。
+- 可将关键事件同步到 WHMCS Activity Log。
 
-- WHMCS 9.0.3
-- PHP 8.2 / 8.3
-- MySQL 8.0
-- WHMCS 原生 Nexus、Six、Twenty-One 主题
-- Lagom Client Theme
+## 环境要求
 
-## 安装
+- WHMCS 9.0.x
+- PHP 8.2 或更高版本
+- MySQL 5.7 / 8.0
+- WHMCS 原生邮箱验证已启用
 
-1. 将 `peakrack_email_gate/` 上传到 WHMCS 的 `modules/addons/peakrack_email_gate/`。
-2. 在 WHMCS 后台进入 **System Settings > Addon Modules**。
-3. 启用 **PeakRack Email Verification Gate**。
-4. 进入 **Addons > PeakRack Email Verification Gate**。
-5. 检查模块开关、限流设置、邮件模板和后台语言。
-6. 确认 WHMCS 原生 **Email Verification** 仍保持开启。
+## 安装方法
 
-## 使用方式
+1. 从官方仓库下载最新版本。
+2. 将插件目录上传到：
 
-模块启用后，未验证邮箱客户登录客户中心时会被引导到验证页。客户可以优先使用 WHMCS 原生验证邮件，也可以在验证页获取新的验证邮件。
+   `modules/addons/peakrack_email_gate/`
 
-如果未验证客户已经进入购物车结账流程，模块会将客户跳转到验证页，而不是在结账页显示错误提示。当前结账地址会作为验证成功后的返回目标保存。模块不会清理 WHMCS 的购物车会话，因此客户已选择的商品和已应用的优惠码会继续保留。
+3. 登录 WHMCS 后台。
+4. 进入 **System Settings > Addon Modules** 并启用 **PeakRack Email Verification Gate**。
+5. 打开 **Addons > PeakRack Email Verification Gate**，生产环境使用前检查所有设置。
 
-新的验证邮件包含两种验证方式：
+## 配置说明
 
-- 点击邮件中的验证按钮；
-- 在验证页输入邮件中的 6 位安全验证码。
+| 配置项 | 说明 | 默认值 |
+|---|---|---|
+| Enable module | 是否启用自定义验证页逻辑 | 开启 |
+| Force unverified users to gate page | 未验证客户访问客户区时跳转到验证页 | 开启 |
+| Redirect unverified checkout to verification | 未验证客户结账时跳转到验证页 | 开启 |
+| Mirror key events to WHMCS Activity Log | 将关键事件写入 WHMCS 活动日志 | 开启 |
+| Resend cooldown seconds | 两次请求自定义邮件之间的最短间隔 | 60 |
+| Max resends per hour | 每个用户每小时最多重发次数 | 5 |
+| Code lifetime minutes | 六位验证码有效时间 | 10 |
+| Link lifetime minutes | 签名链接有效时间 | 30 |
+| Max failed code attempts | 临时锁定前允许的错误次数 | 5 |
+| Lock minutes | 临时锁定时长 | 15 |
+| Log retention days | 按时间清理模块日志 | 180 |
+| Maximum log rows | 按数量清理模块日志 | 10000 |
+| Get Code button color | 客户区获取验证码按钮颜色 | #2563eb |
+| Email subject/body templates | 英文和中文自定义验证邮件内容 | 内置模板 |
+| Gate notice templates | 英文和中文客户区提示内容 | 内置提示 |
 
-任意一种方式验证成功后，模块会同步 WHMCS 邮箱验证状态，并将客户带回原先尝试访问的页面。
+## 使用说明
 
-## 后台管理
+管理员启用插件后，应保持 WHMCS 原生邮箱验证开启，并检查验证页、结账拦截、速率限制、邮件模板和日志保留设置。
 
-后台页面包含四个区域：
+未验证邮箱的已登录客户会进入验证页。客户可以使用 WHMCS 原生验证邮件，也可以请求自定义邮件，然后点击签名链接或输入六位验证码。验证成功后，插件会同步 WHMCS 邮箱验证状态，并把客户跳回之前访问的本地页面。
 
-- **设置**：配置模块开关、验证页拦截、下单阻止、冷却时间、有效期和邮件模板。
-- **记录**：查看客户验证状态、发送次数、错误次数和锁定状态。
-- **日志**：查看模块关键事件。
-- **工具**：解锁客户、清理过期 token、执行日志保留清理、轮换 HMAC 密钥。
+## 数据库表
 
-## 升级
+- `mod_peakrack_email_gate_settings`
+- `mod_peakrack_email_gate_records`
+- `mod_peakrack_email_gate_logs`
+
+## 升级说明
 
 请查看 [UPGRADE.zh-CN.md](UPGRADE.zh-CN.md)。
 
-升级前建议备份 WHMCS 数据库。升级不会删除设置、验证记录或日志。
+## 英文文档
 
-## 卸载
+请查看 [README.md](README.md)。
 
-停用模块不会删除设置、验证记录或日志。卸载函数默认也会保留数据，只有管理员显式确认删除时才会清理模块数据。
+## 安全说明
 
-## 开源协议
+请勿提交生产环境凭据、API Key、数据库密码、支付密钥、WHMCS 授权信息、客户数据、身份证件或私有签名密钥。
 
-本项目采用 MIT License，详见 [LICENSE](LICENSE)。
+安全问题报告方式请查看 [SECURITY.md](SECURITY.md)。
+
+## 许可证
+
+本项目基于 Apache License 2.0 发布。完整许可证请查看 [LICENSE](LICENSE)。
+
+其他项目声明请查看 [NOTICE](NOTICE)。

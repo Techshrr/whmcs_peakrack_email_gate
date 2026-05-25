@@ -1,7 +1,15 @@
 <?php
+// SPDX-License-Identifier: Apache-2.0
 
 /**
- * Hooks for PeakRack Email Verification Gate.
+ * PeakRack Email Verification Gate
+ *
+ * Official repository:
+ * https://github.com/Techshrr/whmcs_peakrack_email_gate
+ *
+ * Copyright 2026 PeakRack.
+ * Licensed under the Apache License, Version 2.0.
+ * See the LICENSE and NOTICE files for details.
  */
 
 if (!defined('WHMCS')) {
