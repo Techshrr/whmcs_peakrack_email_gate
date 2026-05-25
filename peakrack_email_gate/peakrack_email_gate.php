@@ -213,6 +213,9 @@ function peakrack_email_gate_clientarea(array $vars): array
             'message' => peakrack_email_gate_client_result_message($language, $result),
             'redirect' => $success ? $redirectUrl : '',
             'locked' => in_array((string) ($result['message'] ?? ''), ['locked', 'locked_now'], true),
+            'lock_wait' => in_array((string) ($result['message'] ?? ''), ['locked', 'locked_now'], true)
+                ? max(0, (int) ($result['wait'] ?? 0))
+                : 0,
         ]);
     }
 
@@ -257,6 +260,13 @@ function peakrack_email_gate_clientarea(array $vars): array
         'has_active_code' => false,
     ];
     $texts = peakrack_email_gate_client_texts($language);
+    $recordStatus['locked_message'] = '';
+    if (!empty($recordStatus['is_locked'])) {
+        $recordStatus['locked_message'] = sprintf(
+            $texts['locked'],
+            max(1, (int) ceil(((int) ($recordStatus['lock_wait'] ?? 0)) / 60))
+        );
+    }
 
     return [
         'pagetitle' => $texts['title'],
@@ -743,8 +753,11 @@ function peakrack_email_gate_client_result_message(string $language, array $resu
     if (($result['message'] ?? '') === 'cooldown') {
         return sprintf(peakrack_email_gate_client_text($language, 'cooldown'), (int) ($result['wait'] ?? 0));
     }
-    if (($result['message'] ?? '') === 'locked') {
-        return sprintf(peakrack_email_gate_client_text($language, 'locked'), (int) ceil(((int) ($result['wait'] ?? 0)) / 60));
+    if (in_array((string) ($result['message'] ?? ''), ['locked', 'locked_now'], true)) {
+        return sprintf(
+            peakrack_email_gate_client_text($language, (string) ($result['message'] ?? 'locked')),
+            max(1, (int) ceil(((int) ($result['wait'] ?? 0)) / 60))
+        );
     }
 
     return peakrack_email_gate_client_text($language, (string) ($result['message'] ?? 'unknown'));
@@ -792,8 +805,8 @@ function peakrack_email_gate_client_texts(string $language): array
             'code_missing' => 'No active code was found. Please request a new code.',
             'code_expired' => 'The code is incorrect or expired. Please request a new code.',
             'code_failed' => 'The code is incorrect or expired. Please check it and try again, or request a new code.',
-            'locked_now' => 'Too many incorrect codes. Verification is locked for 15 minutes.',
-            'locked' => 'Verification is temporarily locked. Try again in about %d minutes.',
+            'locked_now' => 'Too many incorrect attempts. Verification has been temporarily locked. Please try again in about %d minutes.',
+            'locked' => 'Too many incorrect attempts. Verification is temporarily locked. Please try again in about %d minutes.',
             'sync_failed' => 'Verification succeeded, but WHMCS email status could not be updated. Please contact support.',
             'record_missing' => 'Verification record could not be prepared. Please contact support.',
             'module_disabled' => 'Email verification gate is disabled.',
@@ -832,8 +845,8 @@ function peakrack_email_gate_client_texts(string $language): array
             'code_missing' => '没有可用的验证码，请重新获取验证码。',
             'code_expired' => '验证码不正确或已过期，请重新获取验证码。',
             'code_failed' => '验证码不正确或已过期，请核对后重试，或重新获取验证码。',
-            'locked_now' => '验证码错误次数过多，已锁定 15 分钟。',
-            'locked' => '验证已临时锁定，请约 %d 分钟后再试。',
+            'locked_now' => '输入错误次数过多，验证已临时锁定，请约 %d 分钟后再试。',
+            'locked' => '输入错误次数过多，验证已临时锁定，请约 %d 分钟后再试。',
             'sync_failed' => '验证已通过，但无法同步 WHMCS 邮箱验证状态，请联系支持。',
             'record_missing' => '无法创建验证记录，请联系支持。',
             'module_disabled' => '邮箱验证拦截模块已禁用。',

@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.8';
+const PREG_VERSION = '1.1.9';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -435,8 +435,9 @@ if (!function_exists('peakrackEmailGateVerifyCode')) {
             'updated_at' => peakrackEmailGateNow(),
         ];
         $maxFailed = (int) ($settings['maxFailedAttempts'] ?? 5);
+        $lockSeconds = max(60, ((int) ($settings['lockMinutes'] ?? 15)) * 60);
         if ($failed >= $maxFailed) {
-            $updates['locked_until'] = date('Y-m-d H:i:s', time() + ((int) $settings['lockMinutes'] * 60));
+            $updates['locked_until'] = date('Y-m-d H:i:s', time() + $lockSeconds);
         }
 
         Capsule::table(PREG_RECORDS_TABLE)
@@ -448,7 +449,12 @@ if (!function_exists('peakrackEmailGateVerifyCode')) {
             'locked' => $failed >= $maxFailed,
         ]);
 
-        return ['success' => false, 'message' => $failed >= $maxFailed ? 'locked_now' : 'code_failed'];
+        $result = ['success' => false, 'message' => $failed >= $maxFailed ? 'locked_now' : 'code_failed'];
+        if ($failed >= $maxFailed) {
+            $result['wait'] = $lockSeconds;
+        }
+
+        return $result;
     }
 }
 

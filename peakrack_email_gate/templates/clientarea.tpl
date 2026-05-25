@@ -106,7 +106,7 @@
 
             {if $prgate.loggedIn}
                 <div class="preg-code-box">
-                    <form id="preg-code-form" method="post" action="{$prgate.modulelink|escape}" data-verifying-message="{$prgate.text.verifying|escape}" data-error-message="{$prgate.text.code_check_failed|escape}" data-default-redirect="{$prgate.clientareaUrl|escape}" data-code-locked="{if $prgate.record.is_locked}1{else}0{/if}" novalidate>
+                    <form id="preg-code-form" method="post" action="{$prgate.modulelink|escape}" data-verifying-message="{$prgate.text.verifying|escape}" data-error-message="{$prgate.text.code_check_failed|escape}" data-default-redirect="{$prgate.clientareaUrl|escape}" data-code-active="{if $prgate.record.has_active_code}1{else}0{/if}" data-code-locked="{if $prgate.record.is_locked}1{else}0{/if}" data-lock-wait="{$prgate.record.lock_wait|intval}" data-locked-message="{$prgate.record.locked_message|escape}" novalidate>
                         <input type="hidden" name="token" value="{$prgate.token|escape}">
                         <input type="hidden" name="preg_client_action" value="verify_code_ajax">
                         <input type="hidden" name="return_url" value="{$prgate.returnUrl|escape}">
@@ -122,7 +122,7 @@
                                 <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="6" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
                             </div>
                         </div>
-                        <div id="preg-code-status" class="alert preg-code-status" style="display:none;"></div>
+                        <div id="preg-code-status" class="alert preg-code-status {if $prgate.record.is_locked}alert-danger{/if}" style="{if not $prgate.record.is_locked}display:none;{/if}">{if $prgate.record.is_locked}{$prgate.record.locked_message|escape}{/if}</div>
                     </form>
 
                     <div class="preg-actions">
@@ -148,9 +148,12 @@
                     var statusBox = document.getElementById('preg-code-status');
                     var resendButton = document.getElementById('preg-resend-button');
                     var verifying = false;
+                    var codeActive = form.getAttribute('data-code-active') === '1';
                     var codeLocked = form.getAttribute('data-code-locked') === '1';
+                    var lockTimer = null;
 
                     initResendCooldown();
+                    initLockCountdown();
 
                     form.addEventListener('submit', function (event) {
                         event.preventDefault();
@@ -174,8 +177,54 @@
 
                     function setDisabled(disabled) {
                         inputs.forEach(function (input) {
-                            input.disabled = disabled || codeLocked;
+                            input.disabled = disabled || codeLocked || !codeActive;
                         });
+                    }
+
+                    function setCodeLocked(locked) {
+                        codeLocked = locked;
+                        form.setAttribute('data-code-locked', locked ? '1' : '0');
+                        setDisabled(false);
+                    }
+
+                    function clearCodeInputs() {
+                        inputs.forEach(function (input) {
+                            input.value = '';
+                        });
+                    }
+
+                    function scheduleLockRelease(seconds) {
+                        var remaining = parseInt(seconds || '0', 10);
+                        if (lockTimer) {
+                            window.clearTimeout(lockTimer);
+                            lockTimer = null;
+                        }
+                        if (!codeLocked || !remaining || remaining <= 0) {
+                            return;
+                        }
+
+                        form.setAttribute('data-lock-wait', String(remaining));
+                        lockTimer = window.setTimeout(function () {
+                            setCodeLocked(false);
+                            form.setAttribute('data-lock-wait', '0');
+                            setStatus('danger', '');
+                            clearCodeInputs();
+                            if (codeActive && inputs[0]) {
+                                inputs[0].focus();
+                            }
+                        }, remaining * 1000);
+                    }
+
+                    function initLockCountdown() {
+                        if (!codeLocked) {
+                            return;
+                        }
+
+                        setDisabled(false);
+                        if (statusBox && !statusBox.textContent) {
+                            setStatus('danger', form.getAttribute('data-locked-message') || '');
+                        }
+                        scheduleLockRelease(parseInt(form.getAttribute('data-lock-wait') || '0', 10));
                     }
 
                     function initResendCooldown() {
@@ -238,29 +287,29 @@
 
                             verifying = false;
                             if (data && data.locked) {
-                                codeLocked = true;
-                                form.setAttribute('data-code-locked', '1');
+                                codeActive = true;
+                                form.setAttribute('data-code-active', '1');
+                                setCodeLocked(true);
+                                scheduleLockRelease(parseInt(data.lock_wait || '0', 10));
                             }
                             setDisabled(false);
                             setStatus('danger', (data && data.message) || form.getAttribute('data-error-message') || '');
-                            inputs.forEach(function (input) {
-                                input.value = '';
-                            });
-                            if (!codeLocked) {
+                            clearCodeInputs();
+                            if (!codeLocked && codeActive) {
                                 inputs[0].focus();
                             }
                         }).catch(function () {
                             verifying = false;
                             setDisabled(false);
                             setStatus('danger', form.getAttribute('data-error-message') || '');
-                            if (!codeLocked) {
+                            if (!codeLocked && codeActive) {
                                 inputs[0].focus();
                             }
                         });
                     }
 
                     function fillFromText(text, startIndex) {
-                        if (codeLocked) {
+                        if (codeLocked || !codeActive) {
                             return;
                         }
                         var digits = String(text || '').replace(/\D/g, '').slice(0, 6 - startIndex).split('');
@@ -274,7 +323,7 @@
 
                     inputs.forEach(function (input, index) {
                         input.addEventListener('input', function () {
-                            if (codeLocked) {
+                            if (codeLocked || !codeActive) {
                                 input.value = '';
                                 return;
                             }

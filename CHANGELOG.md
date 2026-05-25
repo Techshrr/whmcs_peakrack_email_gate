@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.9 - 2026-05-26
+
+- Changed the lockout message to explain that too many incorrect attempts caused the temporary lock.
+- Added a silent client-side lockout timer that hides the lockout notice and releases the code inputs when the lock expires.
+- Returned lockout wait time from both existing-lock and newly-triggered-lock AJAX responses.
+
 ## 1.1.8 - 2026-05-26
 
 - Disabled and greyed out the six verification-code inputs while a lockout is active.
