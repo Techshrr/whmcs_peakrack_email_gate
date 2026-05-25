@@ -1,5 +1,14 @@
 # Upgrade Notes
 
+## Upgrade to 1.1.8
+
+1. Back up the WHMCS database.
+2. Replace `modules/addons/peakrack_email_gate/` with the new `peakrack_email_gate/` directory.
+3. Clear the WHMCS template cache if the client verification page still shows active code inputs during lockout.
+4. Test five incorrect code attempts and confirm the six code inputs become grey and cannot be edited during the lockout window.
+
+No database migration is required from 1.1.7 to 1.1.8.
+
 ## Upgrade to 1.1.7
 
 1. Back up the WHMCS database.

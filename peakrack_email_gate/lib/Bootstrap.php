@@ -13,7 +13,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.7';
+const PREG_VERSION = '1.1.8';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -1127,6 +1127,8 @@ if (!function_exists('peakrackEmailGateRecordStatus')) {
                 'resend_total' => 0,
                 'failed_attempts' => 0,
                 'locked_until' => '',
+                'is_locked' => false,
+                'lock_wait' => 0,
                 'cooldown_wait' => 0,
                 'has_active_code' => false,
             ];
@@ -1138,6 +1140,7 @@ if (!function_exists('peakrackEmailGateRecordStatus')) {
         if ($lastSent > 0) {
             $cooldownWait = max(0, ((int) $settings['cooldownSeconds']) - (time() - $lastSent));
         }
+        $lockWait = max(0, peakrackEmailGateTimestamp($record->locked_until ?? null) - time());
 
         return [
             'exists' => true,
@@ -1145,6 +1148,8 @@ if (!function_exists('peakrackEmailGateRecordStatus')) {
             'resend_total' => (int) ($record->resend_total ?? 0),
             'failed_attempts' => (int) ($record->failed_attempts ?? 0),
             'locked_until' => (string) ($record->locked_until ?? ''),
+            'is_locked' => $lockWait > 0,
+            'lock_wait' => $lockWait,
             'cooldown_wait' => $cooldownWait,
             'has_active_code' => trim((string) ($record->code_hash ?? '')) !== ''
                 && peakrackEmailGateTimestamp($record->code_expires_at ?? null) >= time(),

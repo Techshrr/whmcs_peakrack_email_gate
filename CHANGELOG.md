@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.8 - 2026-05-26
+
+- Disabled and greyed out the six verification-code inputs while a lockout is active.
+- Kept the inputs disabled immediately when an AJAX code check reaches the lockout limit.
+- Added explicit lockout state to the client-area template data.
+
 ## 1.1.7 - 2026-05-25
 
 - Replaced the 1.1.6 table-based email body with a plain `div`/`p` fragment to avoid WHMCS email CSS table borders.

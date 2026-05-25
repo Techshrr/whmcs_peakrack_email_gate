@@ -39,9 +39,12 @@
         padding: 0;
     }
     .preg-email-gate .preg-code-digit:disabled {
-        background: #f8fafc;
-        color: #98a2b3;
+        background: #f1f5f9 !important;
+        border-color: #d0d5dd !important;
+        color: #98a2b3 !important;
         cursor: not-allowed;
+        opacity: 1;
+        box-shadow: none !important;
     }
     .preg-email-gate .preg-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
     .preg-email-gate .preg-actions form { margin: 0; }
@@ -103,7 +106,7 @@
 
             {if $prgate.loggedIn}
                 <div class="preg-code-box">
-                    <form id="preg-code-form" method="post" action="{$prgate.modulelink|escape}" data-verifying-message="{$prgate.text.verifying|escape}" data-error-message="{$prgate.text.code_check_failed|escape}" data-default-redirect="{$prgate.clientareaUrl|escape}" novalidate>
+                    <form id="preg-code-form" method="post" action="{$prgate.modulelink|escape}" data-verifying-message="{$prgate.text.verifying|escape}" data-error-message="{$prgate.text.code_check_failed|escape}" data-default-redirect="{$prgate.clientareaUrl|escape}" data-code-locked="{if $prgate.record.is_locked}1{else}0{/if}" novalidate>
                         <input type="hidden" name="token" value="{$prgate.token|escape}">
                         <input type="hidden" name="preg_client_action" value="verify_code_ajax">
                         <input type="hidden" name="return_url" value="{$prgate.returnUrl|escape}">
@@ -111,12 +114,12 @@
                         <div class="form-group">
                             <label for="preg-code-1">{$prgate.text.code_label|escape}</label>
                             <div class="preg-code-inputs" dir="ltr">
-                                <input type="text" class="form-control preg-code-digit" id="preg-code-1" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="1" {if not $prgate.record.has_active_code}disabled{/if}>
-                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="2" {if not $prgate.record.has_active_code}disabled{/if}>
-                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="3" {if not $prgate.record.has_active_code}disabled{/if}>
-                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="4" {if not $prgate.record.has_active_code}disabled{/if}>
-                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="5" {if not $prgate.record.has_active_code}disabled{/if}>
-                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="6" {if not $prgate.record.has_active_code}disabled{/if}>
+                                <input type="text" class="form-control preg-code-digit" id="preg-code-1" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="1" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
+                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="2" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
+                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="3" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
+                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="4" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
+                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="5" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
+                                <input type="text" class="form-control preg-code-digit" inputmode="numeric" maxlength="1" aria-label="6" {if not $prgate.record.has_active_code or $prgate.record.is_locked}disabled{/if}>
                             </div>
                         </div>
                         <div id="preg-code-status" class="alert preg-code-status" style="display:none;"></div>
@@ -145,6 +148,7 @@
                     var statusBox = document.getElementById('preg-code-status');
                     var resendButton = document.getElementById('preg-resend-button');
                     var verifying = false;
+                    var codeLocked = form.getAttribute('data-code-locked') === '1';
 
                     initResendCooldown();
 
@@ -170,7 +174,7 @@
 
                     function setDisabled(disabled) {
                         inputs.forEach(function (input) {
-                            input.disabled = disabled;
+                            input.disabled = disabled || codeLocked;
                         });
                     }
 
@@ -233,21 +237,32 @@
                             }
 
                             verifying = false;
+                            if (data && data.locked) {
+                                codeLocked = true;
+                                form.setAttribute('data-code-locked', '1');
+                            }
                             setDisabled(false);
                             setStatus('danger', (data && data.message) || form.getAttribute('data-error-message') || '');
                             inputs.forEach(function (input) {
                                 input.value = '';
                             });
-                            inputs[0].focus();
+                            if (!codeLocked) {
+                                inputs[0].focus();
+                            }
                         }).catch(function () {
                             verifying = false;
                             setDisabled(false);
                             setStatus('danger', form.getAttribute('data-error-message') || '');
-                            inputs[0].focus();
+                            if (!codeLocked) {
+                                inputs[0].focus();
+                            }
                         });
                     }
 
                     function fillFromText(text, startIndex) {
+                        if (codeLocked) {
+                            return;
+                        }
                         var digits = String(text || '').replace(/\D/g, '').slice(0, 6 - startIndex).split('');
                         digits.forEach(function (digit, offset) {
                             inputs[startIndex + offset].value = digit;
@@ -259,6 +274,11 @@
 
                     inputs.forEach(function (input, index) {
                         input.addEventListener('input', function () {
+                            if (codeLocked) {
+                                input.value = '';
+                                return;
+                            }
+
                             var value = input.value.replace(/\D/g, '');
                             if (value.length > 1) {
                                 input.value = '';

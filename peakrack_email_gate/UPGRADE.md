@@ -5,4 +5,4 @@
 3. Open **Addons > PeakRack Email Verification Gate** once.
 4. Review email templates and rate-limit settings.
 
-Version 1.1.7 keeps settings, records, logs, and WHMCS cart session data. It replaces the broken 1.1.6 table-based default email body with a plain div/p fragment that does not trigger WHMCS email table borders. Old default email templates are upgraded automatically unless they appear to be custom administrator templates.
+Version 1.1.8 keeps settings, records, logs, and WHMCS cart session data. It disables and greys out the six verification-code inputs while a lockout is active, including the moment an AJAX code check reaches the lockout limit.

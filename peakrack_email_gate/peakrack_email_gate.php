@@ -212,6 +212,7 @@ function peakrack_email_gate_clientarea(array $vars): array
             'success' => $success,
             'message' => peakrack_email_gate_client_result_message($language, $result),
             'redirect' => $success ? $redirectUrl : '',
+            'locked' => in_array((string) ($result['message'] ?? ''), ['locked', 'locked_now'], true),
         ]);
     }
 
@@ -250,7 +251,10 @@ function peakrack_email_gate_clientarea(array $vars): array
         'resend_total' => 0,
         'failed_attempts' => 0,
         'locked_until' => '',
+        'is_locked' => false,
+        'lock_wait' => 0,
         'cooldown_wait' => 0,
+        'has_active_code' => false,
     ];
     $texts = peakrack_email_gate_client_texts($language);
 
