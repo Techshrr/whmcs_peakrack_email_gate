@@ -4,5 +4,7 @@ Copyright 2026 PeakRack
 Official repository:
 https://github.com/Techshrr/whmcs_peakrack_email_gate
 
+This package contains a WHMCS addon for email-verification gating, signed verification links, and checkout redirection for unverified clients.
+
 Licensed under the Apache License, Version 2.0.
 See the LICENSE file for details.

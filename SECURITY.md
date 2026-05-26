@@ -4,16 +4,16 @@
 
 Please do not open public GitHub issues for security vulnerabilities.
 
-Report security issues to:
+Report issues involving verification links, six-digit codes, HMAC hashing, resend limits, or checkout gating to:
 
 security@peakrack.com
 
 Please include:
 
-- Affected project and version
-- Description of the issue
-- Steps to reproduce
-- Potential impact
+- Affected addon version, WHMCS version, and PHP version
+- Whether the issue affects the gate page, email link, code entry, or checkout redirect
+- Description of the issue and reproduction steps
+- Potential impact on email-verification enforcement
 - Suggested mitigation, if available
 
 ## Supported versions
@@ -25,9 +25,10 @@ Please include:
 
 ## Sensitive data
 
-Do not include real customer data, production API keys, payment secrets, database credentials, WHMCS license information, identity documents, private signing keys, or server passwords in reports.
+Do not include production HMAC secrets, signed verification URLs, verification codes, client email addresses, WHMCS session values, admin credentials, mail logs, or server logs containing customer identifiers.
+
 ## Public issues
 
-General bugs and feature requests may be submitted through GitHub Issues.
+Installation problems, language issues, and documentation fixes may be submitted through GitHub Issues.
 
 Security vulnerabilities must be reported privately by email.
