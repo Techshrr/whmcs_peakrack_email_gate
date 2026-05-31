@@ -19,7 +19,7 @@ if (!defined('WHMCS')) {
 }
 
 const PREG_MODULE = 'peakrack_email_gate';
-const PREG_VERSION = '1.1.9';
+const PREG_VERSION = '1.1.10';
 const PREG_SETTING_KEY = 'config';
 const PREG_SETTINGS_TABLE = 'mod_peakrack_email_gate_settings';
 const PREG_RECORDS_TABLE = 'mod_peakrack_email_gate_records';
@@ -58,11 +58,81 @@ if (!function_exists('peakrackEmailGateDefaults')) {
 if (!function_exists('peakrackEmailGateDefaultEmailMessage')) {
     function peakrackEmailGateDefaultEmailMessage(string $language): string
     {
+        if ($language === 'zh-hk') {
+            return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.55;font-size:14px;"><p style="margin:0 0 12px;">你好 {$client_name}，</p><p style="margin:0 0 14px;">為保障你的帳戶安全，請驗證你在 {$company_name} 使用的電郵地址。</p><p style="margin:0 0 6px;color:#344054;font-weight:700;">安全驗證碼</p><div style="margin:0 0 14px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></div><p style="margin:0 0 8px;color:#475467;">你也可以點擊下方按鈕完成電郵驗證。</p><p style="margin:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">驗證電郵地址</a></p><p style="margin:0 0 12px;color:#667085;font-size:13px;">驗證碼 {$code_minutes} 分鐘內有效，驗證連結 {$token_minutes} 分鐘內有效。</p><p style="margin:0 0 14px;color:#667085;font-size:13px;">如果不是你本人操作，可以忽略本郵件。</p><div style="margin:0;">{$signature}</div></div>';
+        }
+
         if ($language === 'zh') {
             return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.55;font-size:14px;"><p style="margin:0 0 12px;">你好 {$client_name}，</p><p style="margin:0 0 14px;">为了保护你的账户安全，请验证你在 {$company_name} 的邮箱地址。</p><p style="margin:0 0 6px;color:#344054;font-weight:700;">安全验证码</p><div style="margin:0 0 14px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></div><p style="margin:0 0 8px;color:#475467;">你也可以点击下方按钮完成邮箱验证。</p><p style="margin:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">验证邮箱地址</a></p><p style="margin:0 0 12px;color:#667085;font-size:13px;">验证码 {$code_minutes} 分钟内有效，验证链接 {$token_minutes} 分钟内有效。</p><p style="margin:0 0 14px;color:#667085;font-size:13px;">如果不是你本人操作，可以忽略本邮件。</p><div style="margin:0;">{$signature}</div></div>';
         }
 
         return '<div style="font-family:Arial,Helvetica,sans-serif;color:#172033;line-height:1.55;font-size:14px;"><p style="margin:0 0 12px;">Hello {$client_name},</p><p style="margin:0 0 14px;">To keep your account secure, please verify the email address you use with {$company_name}.</p><p style="margin:0 0 6px;color:#344054;font-weight:700;">Security code</p><div style="margin:0 0 14px;"><span style="display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#0b63ce;border-radius:8px;padding:10px 16px;font-family:Consolas,Monaco,monospace;font-size:28px;font-weight:800;letter-spacing:6px;line-height:1;">{$verification_code}</span></div><p style="margin:0 0 8px;color:#475467;">You can also verify your email address with the button below.</p><p style="margin:0 0 12px;"><a href="{$verification_link}" style="display:inline-block;background:#ffffff;color:#172033;text-decoration:none;padding:10px 16px;border-radius:6px;border:1px solid #d0d5dd;font-weight:700;">Verify email address</a></p><p style="margin:0 0 12px;color:#667085;font-size:13px;">The code expires in {$code_minutes} minutes. The verification link expires in {$token_minutes} minutes.</p><p style="margin:0 0 14px;color:#667085;font-size:13px;">If you did not request this, you can ignore this email.</p><div style="margin:0;">{$signature}</div></div>';
+    }
+}
+
+if (!function_exists('peakrackEmailGateTraditionalize')) {
+    function peakrackEmailGateTraditionalize(string $text): string
+    {
+        if ($text === '') {
+            return '';
+        }
+
+        $text = strtr($text, [
+            '邮箱地址' => '電郵地址',
+            '邮箱' => '電郵',
+            '验证码' => '驗證碼',
+            '验证' => '驗證',
+            '链接' => '連結',
+            '账户' => '帳戶',
+            '客户' => '客戶',
+            '登录' => '登入',
+            '退出登录' => '登出',
+            '已发送' => '已發送',
+            '发送' => '發送',
+            '重新' => '重新',
+            '获取' => '獲取',
+            '进入客户中心' => '進入客戶中心',
+            '客户中心' => '客戶中心',
+            '请求' => '請求',
+            '输入' => '輸入',
+            '正确' => '正確',
+            '继续' => '繼續',
+            '自动' => '自動',
+            '自定义' => '自訂',
+            '核对' => '核對',
+            '失败' => '失敗',
+            '次数' => '次數',
+            '已经' => '已經',
+            '没有' => '沒有',
+            '模块' => '模組',
+            '禁用' => '停用',
+            '重试' => '重試',
+            '刷新页面' => '重新整理頁面',
+            '同步' => '同步',
+            '状态' => '狀態',
+            '创建' => '建立',
+            '记录' => '記錄',
+            '拦截' => '攔截',
+            '错误' => '錯誤',
+            '临时' => '臨時',
+            '锁定' => '鎖定',
+            '分钟' => '分鐘',
+            '联系' => '聯絡',
+            '请' => '請',
+        ]);
+
+        return strtr($text, [
+            '为' => '為', '护' => '護', '账' => '帳', '户' => '戶', '邮' => '郵',
+            '验' => '驗', '证' => '證', '码' => '碼', '发' => '發', '链' => '鏈',
+            '接' => '接', '过' => '過', '后' => '後', '时' => '時', '钟' => '鐘',
+            '错' => '錯', '误' => '誤', '临' => '臨', '锁' => '鎖', '请' => '請',
+            '进' => '進', '录' => '錄', '达' => '達', '无' => '無', '联' => '聯',
+            '获' => '獲', '态' => '態', '确' => '確', '输' => '輸', '页' => '頁',
+            '创' => '創', '记' => '記', '拦' => '攔', '截' => '截', '启' => '啟',
+            '继' => '繼', '续' => '續', '动' => '動', '义' => '義', '对' => '對',
+            '败' => '敗', '数' => '數', '经' => '經', '没' => '沒', '块' => '塊',
+            '试' => '試', '开' => '開', '约' => '約',
+        ]);
     }
 }
 
@@ -733,9 +803,13 @@ if (!function_exists('peakrackEmailGateSendCustomEmail')) {
         }
 
         $language = (string) ($context['language'] ?? 'en');
-        $language = $language === 'zh' ? 'zh' : 'en';
-        $subject = $language === 'zh' ? (string) $settings['emailSubjectZh'] : (string) $settings['emailSubjectEn'];
-        $message = $language === 'zh' ? (string) $settings['emailMessageZh'] : (string) $settings['emailMessageEn'];
+        $language = in_array($language, ['zh', 'zh-hk'], true) ? $language : 'en';
+        $subject = in_array($language, ['zh', 'zh-hk'], true) ? (string) $settings['emailSubjectZh'] : (string) $settings['emailSubjectEn'];
+        $message = in_array($language, ['zh', 'zh-hk'], true) ? (string) $settings['emailMessageZh'] : (string) $settings['emailMessageEn'];
+        if ($language === 'zh-hk') {
+            $subject = peakrackEmailGateTraditionalize($subject);
+            $message = peakrackEmailGateTraditionalize($message);
+        }
         $verificationLink = peakrackEmailGateAbsoluteUrl([
             'action' => 'verify',
             'token' => $token,
@@ -1230,7 +1304,7 @@ if (!function_exists('peakrackEmailGateQueueCheckoutRedirect')) {
         $returnUrl = peakrackEmailGateRememberReturnUrl($returnUrl);
         $_SESSION['peakrack_email_gate_checkout_redirect'] = [
             'return_url' => $returnUrl,
-            'language' => $language === 'zh' ? 'zh' : 'en',
+            'language' => in_array($language, ['zh', 'zh-hk'], true) ? $language : 'en',
             'seconds' => 5,
         ];
 
@@ -1241,6 +1315,10 @@ if (!function_exists('peakrackEmailGateQueueCheckoutRedirect')) {
 if (!function_exists('peakrackEmailGateCheckoutRedirectMessage')) {
     function peakrackEmailGateCheckoutRedirectMessage(string $language, int $seconds): string
     {
+        if ($language === 'zh-hk') {
+            return '請先完成電郵驗證後再下單。' . $seconds . ' 即將前往驗證頁。';
+        }
+
         return $language === 'zh'
             ? '请先完成邮箱验证后再下单。' . $seconds . ' 即将前往验证页。'
             : 'Please verify your email address before ordering. ' . $seconds . ' seconds until redirecting to email verification.';
@@ -1261,9 +1339,11 @@ if (!function_exists('peakrackEmailGateRenderPendingCheckoutRedirect')) {
         $params = $returnUrl !== '' ? ['return' => $returnUrl] : [];
         $url = peakrackEmailGateModuleUrl($params);
 
-        $language = (string) ($data['language'] ?? 'en') === 'zh' ? 'zh' : 'en';
+        $language = in_array((string) ($data['language'] ?? 'en'), ['zh', 'zh-hk'], true) ? (string) ($data['language'] ?? 'en') : 'en';
         $seconds = max(1, min(30, (int) ($data['seconds'] ?? 5)));
-        $text = $language === 'zh' ? '即将前往验证页' : 'seconds until redirecting to email verification';
+        $text = $language === 'zh-hk'
+            ? '即將前往驗證頁'
+            : ($language === 'zh' ? '即将前往验证页' : 'seconds until redirecting to email verification');
 
         return '<script>(function(){var seconds=' . $seconds . ';var url=' . json_encode($url, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';var text=' . json_encode($text, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ';var last=String(seconds)+" "+text;var node=null;var box=null;function locate(){var target=document.querySelector(".alert-danger,.errorbox,.clientalert");if(target&&document.createTreeWalker){var walker=document.createTreeWalker(target,NodeFilter.SHOW_TEXT);while((node=walker.nextNode())){if(node.nodeValue.indexOf(last)!==-1){return;}}node=null;}box=document.createElement("div");box.className="alert alert-warning peakrack-email-gate-checkout-redirect";box.style.margin="12px 0";box.style.fontWeight="600";if(target&&target.parentNode){target.parentNode.insertBefore(box,target.nextSibling);}else{document.body.insertBefore(box,document.body.firstChild);}}function render(){var next=String(seconds)+" "+text;if(!node&&!box){locate();}if(node){node.nodeValue=node.nodeValue.indexOf(last)!==-1?node.nodeValue.replace(last,next):node.nodeValue+" "+next;}else if(box){box.textContent=next;}last=next;}function run(){render();var timer=window.setInterval(function(){seconds-=1;if(seconds<=0){window.clearInterval(timer);window.location.href=url;return;}render();},1000);}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",run);}else{run();}})();</script>';
     }
@@ -1428,9 +1508,22 @@ if (!function_exists('peakrackEmailGateRandomHex')) {
 if (!function_exists('peakrackEmailGateNormalizeClientLanguage')) {
     function peakrackEmailGateNormalizeClientLanguage(string $language, array $vars = []): string
     {
-        $candidate = strtolower($language);
+        $candidate = strtolower(str_replace('_', '-', $language));
         if ($candidate === '') {
-            $candidate = strtolower((string) ($_SESSION['Language'] ?? $vars['language'] ?? ''));
+            $candidate = strtolower(str_replace('_', '-', (string) ($_SESSION['Language'] ?? $vars['language'] ?? '')));
+        }
+
+        if (
+            str_contains($candidate, 'chinese-hk')
+            || str_contains($candidate, 'zh-hk')
+            || str_contains($candidate, 'hongkong')
+            || str_contains($candidate, 'hong-kong')
+            || str_contains($candidate, 'hant')
+            || str_contains($candidate, 'traditional')
+            || str_contains($candidate, '繁體')
+            || str_contains($candidate, '繁体')
+        ) {
+            return 'zh-hk';
         }
 
         return str_contains($candidate, 'chinese') || str_contains($candidate, 'zh') ? 'zh' : 'en';

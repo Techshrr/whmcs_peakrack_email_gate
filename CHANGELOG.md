@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 This project follows Semantic Versioning where practical.
 
+## [1.1.10] - 2026-06-01
+
+### Added
+
+- Added Hong Kong Traditional Chinese handling for the client verification page, checkout redirect notice, and verification email content.
+- Added Traditional Chinese conversion for saved Chinese notice and email templates when the client language is detected as `zh-hk` or an equivalent Traditional Chinese locale.
+- Added a WHMCS admin-area GitHub shortcut and browser-side update notice for published GitHub releases or tags.
+
+### Fixed
+
+- Replaced the admin GitHub shortcut icon with inline SVG and adjusted the header actions so the version, repository, and language controls stay inside the panel.
+
 ## [1.1.9] - 2026-05-26
 
 ### Fixed

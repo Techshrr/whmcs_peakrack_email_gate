@@ -18,7 +18,7 @@ It stores module settings, verification records, and logs in module tables. Deac
 - Sends custom verification emails with a signed link and six-digit code.
 - Stores verification links and codes as HMAC hashes.
 - Applies resend cooldown, hourly resend limits, failed-code lockout, and token expiry.
-- Provides English and Chinese client text, email templates, and admin UI.
+- Provides English, Simplified Chinese, and Hong Kong Traditional Chinese client text, email templates, and admin UI.
 - Includes admin records, logs, unlock, cleanup, and HMAC secret rotation tools.
 - Can mirror key events to the WHMCS Activity Log.
 
@@ -57,8 +57,8 @@ It stores module settings, verification records, and logs in module tables. Deac
 | Log retention days | Age-based module log cleanup | 180 |
 | Maximum log rows | Count-based module log cleanup | 10000 |
 | Get Code button color | Client-area resend button color | #2563eb |
-| Email subject/body templates | English and Chinese custom verification email content | Built-in templates |
-| Gate notice templates | English and Chinese client-page notices | Built-in notices |
+| Email subject/body templates | English, Simplified Chinese, and Traditional Chinese verification email content | Built-in templates |
+| Gate notice templates | English, Simplified Chinese, and Traditional Chinese client-page notices | Built-in notices |
 
 ## Usage
 

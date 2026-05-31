@@ -18,7 +18,7 @@ PeakRack Email Verification Gate 是一个 WHMCS 插件，用于在指定客户�
 - 发送包含签名链接和六位验证码的自定义验证邮件。
 - 验证链接和验证码仅以 HMAC 哈希保存。
 - 支持重发冷却、每小时重发限制、验证码错误锁定和 token 过期。
-- 提供英文和中文客户文本、邮件模板和后台界面。
+- 提供英文、简体中文和香港繁体中文客户文本、邮件模板和后台界面。
 - 提供后台记录、日志、解锁、清理和 HMAC 密钥轮换工具。
 - 可将关键事件同步到 WHMCS Activity Log。
 
@@ -57,8 +57,8 @@ PeakRack Email Verification Gate 是一个 WHMCS 插件，用于在指定客户�
 | Log retention days | 按时间清理模块日志 | 180 |
 | Maximum log rows | 按数量清理模块日志 | 10000 |
 | Get Code button color | 客户区获取验证码按钮颜色 | #2563eb |
-| Email subject/body templates | 英文和中文自定义验证邮件内容 | 内置模板 |
-| Gate notice templates | 英文和中文客户区提示内容 | 内置提示 |
+| Email subject/body templates | 英文、简体中文和繁体中文自定义验证邮件内容 | 内置模板 |
+| Gate notice templates | 英文、简体中文和繁体中文客户区提示内容 | 内置提示 |
 
 ## 使用说明
 

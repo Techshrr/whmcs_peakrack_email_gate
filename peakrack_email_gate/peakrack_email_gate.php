@@ -296,7 +296,9 @@ function peakrack_email_gate_clientarea(array $vars): array
                 'logoutUrl' => 'logout.php',
                 'returnUrl' => $returnUrl,
                 'settings' => [
-                    'notice' => $language === 'zh' ? $settings['clientNoticeZh'] : $settings['clientNoticeEn'],
+                    'notice' => $language === 'zh-hk'
+                        ? peakrackEmailGateTraditionalize((string) $settings['clientNoticeZh'])
+                        : ($language === 'zh' ? $settings['clientNoticeZh'] : $settings['clientNoticeEn']),
                     'resendButtonColor' => (string) $settings['resendButtonColor'],
                     'cooldownSeconds' => (int) $settings['cooldownSeconds'],
                     'codeLifetimeMinutes' => (int) $settings['codeLifetimeMinutes'],
@@ -345,6 +347,18 @@ function peakrack_email_gate_settings_from_post(array $current): array
     return peakrackEmailGateMergeSettings(peakrackEmailGateDefaults(), $settings);
 }
 
+function peakrack_email_gate_github_icon(): string
+{
+    return '<svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" focusable="false" style="display:inline-block;vertical-align:-2px;fill:currentColor;flex:0 0 auto"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.64 7.64 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>';
+}
+
+function peakrack_email_gate_github_admin_html(): string
+{
+    return '<a class="preg-github-link" href="https://github.com/Techshrr/whmcs_peakrack_email_gate" target="_blank" rel="noopener noreferrer" title="GitHub repository">' . peakrack_email_gate_github_icon() . '<span>GitHub</span></a>'
+        . '<a class="preg-update-badge" href="https://github.com/Techshrr/whmcs_peakrack_email_gate/releases" target="_blank" rel="noopener noreferrer" data-prk-github-update data-prk-github-repo="Techshrr/whmcs_peakrack_email_gate" data-prk-github-current="' . peakrackEmailGateE(PREG_VERSION) . '" data-prk-github-label="New version {version}" style="display:none"></a>'
+        . '<script>(function(){if(window.PeakRackGithubUpdateCheck){window.PeakRackGithubUpdateCheck();return;}window.PeakRackGithubUpdateCheck=function(){var nodes=document.querySelectorAll("[data-prk-github-update]");if(!nodes.length||!window.fetch){return;}function normalize(v){return String(v||"").replace(/^v/i,"").replace(/[^0-9A-Za-z.\\-+]/g,"");}function compare(a,b){var aa=normalize(a).split(/[.\\-+]/),bb=normalize(b).split(/[.\\-+]/),len=Math.max(aa.length,bb.length);for(var i=0;i<len;i++){var av=aa[i]||"",bv=bb[i]||"";if(av===""&&bv!==""){return 1;}if(av!==""&&bv===""){return -1;}var an=/^\\d+$/.test(av),bn=/^\\d+$/.test(bv);if(an&&bn){var ai=parseInt(av,10),bi=parseInt(bv,10);if(ai!==bi){return ai>bi?1:-1;}}else if(av!==bv){return av>bv?1:-1;}}return 0;}function readCache(repo){try{var raw=localStorage.getItem("peakrack.github.update."+repo);if(!raw){return null;}var data=JSON.parse(raw);if(!data||!data.checkedAt||Date.now()-data.checkedAt>43200000){return null;}return data;}catch(e){return null;}}function writeCache(repo,data){try{data.checkedAt=Date.now();localStorage.setItem("peakrack.github.update."+repo,JSON.stringify(data));}catch(e){}}function fetchJson(url){var controller=window.AbortController?new AbortController():null;var timer=controller?window.setTimeout(function(){controller.abort();},2000):null;return fetch(url,{headers:{Accept:"application/vnd.github+json"},signal:controller?controller.signal:undefined}).then(function(resp){if(timer){window.clearTimeout(timer);}if(!resp.ok){throw new Error("http");}return resp.json();}).catch(function(err){if(timer){window.clearTimeout(timer);}throw err;});}function latest(repo){var base="https://api.github.com/repos/"+repo;return fetchJson(base+"/releases/latest").then(function(data){return{version:data.tag_name||"",url:data.html_url||("https://github.com/"+repo+"/releases")};}).catch(function(){return fetchJson(base+"/tags?per_page=1").then(function(tags){var tag=tags&&tags[0]?tags[0].name:"";return{version:tag,url:tag?("https://github.com/"+repo+"/releases/tag/"+encodeURIComponent(tag)):("https://github.com/"+repo+"/releases")};});});}function apply(node,info){var current=node.getAttribute("data-prk-github-current")||"";if(info&&info.version&&compare(info.version,current)>0){node.href=info.url||node.href;node.textContent=(node.getAttribute("data-prk-github-label")||"New version {version}").replace("{version}",info.version);node.style.display="inline-flex";}}Array.prototype.forEach.call(nodes,function(node){var repo=node.getAttribute("data-prk-github-repo")||"";if(!repo){return;}var cached=readCache(repo);if(cached){apply(node,cached);return;}latest(repo).then(function(info){writeCache(repo,info);apply(node,info);}).catch(function(){});});};window.PeakRackGithubUpdateCheck();})();</script>';
+}
+
 function peakrack_email_gate_render_admin(array $settings, string $message, string $messageType, string $language): string
 {
     $t = peakrack_email_gate_admin_texts($language);
@@ -361,19 +375,22 @@ function peakrack_email_gate_render_admin(array $settings, string $message, stri
     <style>
         .preg-admin { max-width: 1180px; margin: 0; color: #263238; }
         .preg-admin * { box-sizing: border-box; }
-        .preg-hero { position: relative; min-height: 128px; background: #0f172a; color: #fff; border-radius: 6px; padding: 22px 188px 22px 24px; margin: 0 0 18px; }
-        .preg-hero-main { max-width: 100%; }
+        .preg-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; background: #0f172a; color: #fff; border-radius: 6px; padding: 22px 24px; margin: 0 0 18px; }
+        .preg-hero-main { flex: 1 1 auto; min-width: 0; max-width: 100%; }
         .preg-hero h2 { margin: 0 0 8px; color: #fff; font-size: 22px; font-weight: 600; }
         .preg-hero p { margin: 0; color: #cbd5e1; line-height: 1.6; font-size: 14px; }
-        .preg-hero-actions { position: absolute; top: 22px; right: 24px; width: 144px; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .preg-hero-actions { flex: 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; max-width: 360px; }
         .preg-version-badge { display: inline-flex; align-items: center; justify-content: center; min-height: 26px; border-radius: 999px; padding: 3px 10px; background: rgba(37,99,235,.18); color: #bfdbfe; border: 1px solid rgba(191,219,254,.35); font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .preg-github-link, .preg-update-badge { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 26px; border-radius: 999px; padding: 3px 10px; background: rgba(255,255,255,.08); color: #e5edf8; border: 1px solid rgba(203,213,225,.45); font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+        .preg-github-link:hover, .preg-update-badge:hover { color: #fff; background: rgba(255,255,255,.14); text-decoration: none; }
+        .preg-update-badge { background: rgba(245,158,11,.16); color: #fde68a; border-color: rgba(253,230,138,.45); }
         .preg-lang { display: grid; grid-template-columns: 1fr 1fr; width: 132px; height: 38px; border: 1px solid rgba(203,213,225,.45); border-radius: 6px; overflow: hidden; background: rgba(255,255,255,.06); }
         .preg-lang a { display: inline-flex; align-items: center; justify-content: center; min-width: 0; height: 38px; padding: 0 8px; color: #cbd5e1; text-decoration: none; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; }
         .preg-lang a.active { background: #2563eb; color: #fff; }
         .preg-template-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
         .preg-template-panel { border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; background: #fff; }
         .preg-template-panel h3 { margin: 0 0 12px; font-size: 15px; font-weight: 700; }
-        @media (max-width: 900px) { .preg-hero { padding: 22px 20px; } .preg-hero-actions { position: static; width: auto; align-items: flex-start; margin-top: 14px; } .preg-template-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .preg-hero { display: block; padding: 22px 20px; } .preg-hero-actions { justify-content: flex-start; max-width: none; margin-top: 14px; } .preg-template-grid { grid-template-columns: 1fr; } }
     </style>
     <div class="preg-admin">
         <div class="preg-hero">
@@ -383,6 +400,7 @@ function peakrack_email_gate_render_admin(array $settings, string $message, stri
             </div>
             <div class="preg-hero-actions">
                 <span class="preg-version-badge"><?php echo peakrackEmailGateE(sprintf($t['version'], PREG_VERSION)); ?></span>
+                <?php echo peakrack_email_gate_github_admin_html(); ?>
                 <div class="preg-lang" aria-label="Admin language">
                     <a class="<?php echo $language === 'zh' ? 'active' : ''; ?>" href="<?php echo peakrackEmailGateE(peakrack_email_gate_admin_url('zh')); ?>">中文</a>
                     <a class="<?php echo $language === 'en' ? 'active' : ''; ?>" href="<?php echo peakrackEmailGateE(peakrack_email_gate_admin_url('en')); ?>">English</a>
@@ -751,6 +769,12 @@ function peakrack_email_gate_admin_texts(string $language): array
         ],
     ];
 
+    if ($language === 'zh-hk') {
+        foreach ($texts['zh'] as $key => $value) {
+            $texts['zh-hk'][$key] = peakrackEmailGateTraditionalize($value);
+        }
+    }
+
     return $texts[$language] ?? $texts['en'];
 }
 
@@ -859,6 +883,15 @@ function peakrack_email_gate_client_texts(string $language): array
             'unknown' => '请求无法完成。',
         ],
     ];
+
+    if ($language === 'zh-hk') {
+        $traditionalTexts = [];
+        foreach ($texts['zh'] as $key => $value) {
+            $traditionalTexts[$key] = peakrackEmailGateTraditionalize($value);
+        }
+
+        return $traditionalTexts;
+    }
 
     return $texts[$language] ?? $texts['en'];
 }

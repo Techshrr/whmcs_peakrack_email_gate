@@ -33,6 +33,14 @@ The addon creates or updates its module tables during activation, upgrade, admin
 
 ## Version-specific notes
 
+### Upgrade from 1.1.9 to 1.1.10
+
+- No breaking changes.
+- No manual database migration is required.
+- Existing verification records, logs, custom templates, rate-limit settings, and HMAC secret settings are preserved.
+- Clients using Hong Kong Traditional Chinese language settings will receive Traditional Chinese gate text and email content based on the saved Chinese templates.
+- The addon admin page now includes a GitHub shortcut and a browser-side update notice. No server-side migration is required for this admin display.
+
 ### Upgrade from 1.0.x to 1.1.x
 
 - No breaking changes.
